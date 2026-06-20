@@ -15,7 +15,7 @@ class TextNode:
         self.url= url
 
     def __eq__(self, other):
-        print(f"[eq called] self = {self} other = {other}")
+        #print(f"[eq called] self = {self} other = {other}")
         if self.text_type == other.text_type:
             if self.text == other.text:
                 if self.url == other.url:
