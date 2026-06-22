@@ -47,7 +47,7 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(html_node.value, "This is a bold node")
 
     def test_italic(self):
-        node = TextNode("This is a italic node", TextType.ITALIC)
+        node = TextNode("This is an italic node", TextType.ITALIC)
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "i")
         self.assertEqual(html_node.value, "This is an italic node")
@@ -65,10 +65,13 @@ class TestTextNode(unittest.TestCase):
         self.assertEqual(html_node.value, "This is a link node")
 
     def test_image(self):
-        node = TextNode("This is an image node", TextType.IMAGE)
+        node = TextNode("alt text for image", TextType.IMAGE, "https://imgur.com")
+        print(f"[test_image_node] {node}")
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "img")
-        self.assertEqual(html_node.value, "This is an image node")
+        self.assertEqual(html_node.props['src'], "https://imgur.com")
+        self.assertEqual(html_node.props['alt'], "alt text for image")
+
 
 
 
