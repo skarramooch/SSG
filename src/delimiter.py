@@ -5,8 +5,8 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
     for node in old_nodes:
         print(f"node: {node}")
         print(f"text_type is {text_type}")
-        if text_type != node.Text_Type.TEXT:
-            split_nodes += node
+        if text_type != "plain text":
+            split_nodes.append(node)
             print(f"text type matches - adding node to split_nodes: {split_nodes}")
         for char in range(len(node.text)):
             if node.text[char] == delimiter[0]:
@@ -23,3 +23,4 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                     bracket_queue.pop(-1)
                 if delimiter != bracket_queue[-1]:
                     bracket_queue.append(delimiter)
+        return split_nodes

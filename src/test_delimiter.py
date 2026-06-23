@@ -9,7 +9,7 @@ class TestDelimiter(unittest.TestCase):
         html_node = text_node_to_html_node(node)
         print(f"converted to html node: {html_node}")
         self.assertEqual(html_node.tag, None)
-        split_nodes = split_nodes_delimiter([node], "_", TextType.TEXT)
-        print(f"ran through split nodes: {split_nodes}")
-        self.assertEqual(split_nodes, [node])
+        result = split_nodes_delimiter([node], "_", TextType.TEXT)
+        print(f"ran through split nodes: {result}")
+        self.assertEqual(result, [node])
 
