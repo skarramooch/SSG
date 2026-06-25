@@ -21,10 +21,10 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                     bracket_queue.pop(-1)
                 elif delimiter != bracket_queue[::-1]:
                     bracket_queue.append(delimiter)
-                    split_nodes += node.text.split(local_d, 2)
+                    split_nodes.append(node.text.split(local_d, 2))
                 else:
                     print("wasnt expecting this")
-                
+        print(split_nodes)       
 
         print(" \n ******************************* \n ")
         return split_nodes
