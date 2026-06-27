@@ -1,3 +1,6 @@
+from textnode import TextType
+
+
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     split_nodes =[]
     bracket_queue = []
@@ -24,7 +27,19 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
                     split_nodes.append(node.text.split(local_d, 2))
                 else:
                     print("wasnt expecting this")
-        print(split_nodes)       
+        #print(split_nodes) 
+
+        #print("now defining nodes")
+        #print(f"can we slice plit_nodes? split_nodes[0] is {split_nodes[0]}")
+        print(f"len(split_nodes)>1 ({len(split_nodes)})") 
+        if len(split_nodes) > 1:
+            print(f"len(split_nodes[1] == 2 ({len(split_nodes[1])})")
+        if len(split_nodes) > 1 and len(split_nodes[1]) == 2:
+            first_frag = split_nodes[1][0]
+            second_frag = split_nodes[1][1]
+            print(f"first frag '{first_frag}', second frag '{second_frag}'")
+          
+        
 
         print(" \n ******************************* \n ")
         return split_nodes
