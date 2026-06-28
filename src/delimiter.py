@@ -32,9 +32,13 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
         # redoing the frags
         new_nodes = []
         for node in split_nodes:
-            for frag in node:
-                print(f"frag '{frag}', is it odd or even? {frag}")
-                new_nodes.append(TextNode(frag, TextType.TEXT))
+            for frag in range(0, len(node)):
+                print(f"frag '{frag}', is it odd or even? {frag} node[frag]%2 {frag % 2}")
+                if frag % 2 == 0:
+                    new_nodes.append(TextNode(node[frag], TextType.TEXT))
+                if frag % 2 == 1:
+                    new_nodes.append(TextNode(node[frag], text_type))
+
 
 
 
