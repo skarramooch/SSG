@@ -6,9 +6,9 @@ class TestDelimiter(unittest.TestCase):
     def test_none(self):
         node = TextNode("This is a plain text node", TextType.TEXT)
         html_node = text_node_to_html_node(node)
-        #self.assertEqual(html_node.tag, None)
+        self.assertEqual(html_node.tag, None)
         result = split_nodes_delimiter([node], "_", TextType.TEXT)
-        #self.assertEqual(result, [node])
+        self.assertEqual(result, [node])
 
     def test_bold(self):
         #print("testing bold **")
@@ -67,18 +67,14 @@ class TestDelimiter(unittest.TestCase):
     def test_unmatched(self):
         #print("testing unmatched delimiter")
         node = TextNode("This is a an *unmatched node", TextType.TEXT)
-        html_node = text_node_to_html_node(node)
-        #self.assertEqual(html_node.tag, None)
-        result = split_nodes_delimiter([node], "*", TextType.BOLD)
-        #self.assertEqual(result, [node])
+        with self.assertRaises(ValueError):
+            split_nodes_delimiter([node], "*", TextType.BOLD)
 
     def test_multiple_delimiters(self):
         #print("testing multiple  delimiters")
         node = TextNode("This has *multiple* *delimiters*", TextType.TEXT)
-        html_node = text_node_to_html_node(node)
-        #self.assertEqual(html_node.tag, None)
         result = split_nodes_delimiter([node], "*", TextType.BOLD)
-        #self.assertEqual(result, [node])
+        self.assertEqual(str(result[3]), " ")
 
 def test_multiple_nodes(self):
         #print("testing multiple  delimiters")
