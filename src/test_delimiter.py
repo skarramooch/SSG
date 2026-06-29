@@ -71,13 +71,11 @@ class TestDelimiter(unittest.TestCase):
             split_nodes_delimiter([node], "*", TextType.BOLD)
 
     def test_multiple_delimiters(self):
-        #print("testing multiple  delimiters")
         node = TextNode("This has *multiple* *delimiters*", TextType.TEXT)
         result = split_nodes_delimiter([node], "*", TextType.BOLD)
         self.assertEqual(str(result[3]), " ")
 
 def test_multiple_nodes(self):
-        #print("testing multiple  delimiters")
         node = TextNode("This is the *first* line", TextType.TEXT)
         node1 = TextNode("This is the *second* line", TextType.TEXT)
         node2 = TextNode("This is the third line (with no formatting)", TextType.TEXT)
@@ -90,9 +88,7 @@ def test_multiple_nodes(self):
 
         old_nodes = [html_node, html_node1, html_node2, html_node3]
 
-        #self.assertEqual(html_node.tag, None)
         result = split_nodes_delimiter(old_nodes, "*", TextType.BOLD)
-        #self.assertEqual(result, [node])
 
 
 
