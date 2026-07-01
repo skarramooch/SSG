@@ -52,7 +52,7 @@ class TestDelimiter(unittest.TestCase):
         html_node = text_node_to_html_node(node)
         #self.assertEqual(html_node.tag, None)
         result = split_nodes_delimiter([node], "*", TextType.BOLD)
-        #self.assertEqual(result, [node])
+        #self.assertEqual(resul, [node])
  
     def test_xyz_before_end(self):
         #print("testing delimiter xyz with text after")
@@ -73,7 +73,14 @@ class TestDelimiter(unittest.TestCase):
     def test_multiple_delimiters(self):
         node = TextNode("This has *multiple* *delimiters*", TextType.TEXT)
         result = split_nodes_delimiter([node], "*", TextType.BOLD)
-        self.assertEqual(str(result[3]), " ")
+        print(f"testing multiple delimiters, result[0].text: ({result[0].text})")
+        print(f"testing multiple delimiters, result[1].text: ({result[1].text})")
+        print(f"testing multiple delimiters, result[2].text: ({result[2].text})")
+        print(f"testing multiple delimiters, result[3].text: ({result[3].text})")
+
+
+
+        self.assertEqual(str(result[2].text), " ")
 
 def test_multiple_nodes(self):
         node = TextNode("This is the *first* line", TextType.TEXT)
@@ -86,7 +93,7 @@ def test_multiple_nodes(self):
         html_node2 = text_node_to_html_node(node2)
         html_node3 = text_node_to_html_node(node3)
 
-        old_nodes = [html_node, html_node1, html_node2, html_node3]
+        old_nodes = [node, node1, node2, node3]
 
         result = split_nodes_delimiter(old_nodes, "*", TextType.BOLD)
 
