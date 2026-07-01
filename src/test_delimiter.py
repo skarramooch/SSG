@@ -8,91 +8,69 @@ class TestDelimiter(unittest.TestCase):
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, None)
         result = split_nodes_delimiter([node], "_", TextType.TEXT)
-        self.assertEqual(result, [node])
+        self.assertEqual(result[0].text, "This is a plain text node")
+        self.assertEqual(result[0].text_type, TextType.TEXT)
 
     def test_bold(self):
-        #print("testing bold **")
         node = TextNode("This is a **bold** node", TextType.TEXT)
-        html_node = text_node_to_html_node(node)
-        #self.assertEqual(html_node.tag, None)
         result = split_nodes_delimiter([node], "**", TextType.BOLD)
-        #self.assertNotEqual(result, [node])
- 
-
+        self.assertNotEqual(result[1].text_type, result[0].text_type)
 
     def test_italic(self):
-        #print("testing italic *")
         node = TextNode("This is an *italic* node", TextType.TEXT)
-        html_node = text_node_to_html_node(node)
-        #self.assertEqual(html_node.tag, None)
         result = split_nodes_delimiter([node], "*", TextType.ITALIC)
-        #self.assertEqual(result, [node])
- 
-
+        self.assertEqual(result[1].text_type, TextType.ITALIC)
 
     def test_code(self):
-        #print("testing code `")
         node = TextNode("This is a `code` node", TextType.TEXT)
-        html_node = text_node_to_html_node(node)
-        #self.assertEqual(html_node.tag, None)
         result = split_nodes_delimiter([node], "`", TextType.CODE)
-        #self.assertEqual(result, [node])
+        self.assertEqual(result[1].text, "code")
+        self.assertEqual(result[1].text_type, TextType.CODE)
  
     def test_delimiter(self):
-        #print("testing delimiter xyz")
         node = TextNode("This is a xyznodexyz", TextType.TEXT)
-        html_node = text_node_to_html_node(node)
-        #self.assertEqual(html_node.tag, None)
         result = split_nodes_delimiter([node], "xyz", TextType.BOLD)
-        #self.assertEqual(result, [node])
+        self.assertEqual(result[1].text, "node")
 
     def test_delimiter_at_end(self):
-        #print("testing delimiter at end")
         node = TextNode("This is a *node*", TextType.TEXT)
-        html_node = text_node_to_html_node(node)
-        #self.assertEqual(html_node.tag, None)
         result = split_nodes_delimiter([node], "*", TextType.BOLD)
-        #self.assertEqual(result, [node])
+        self.assertEqual(result[1].text, "node")
+        self.assertEqual(result[1].text_type, TextType.BOLD)
  
     def test_xyz_before_end(self):
-        #print("testing delimiter xyz with text after")
         node = TextNode("This is a xyznodexyz with text after", TextType.TEXT)
-        html_node = text_node_to_html_node(node)
-        #self.assertEqual(html_node.tag, None)
-        result = split_nodes_delimiter([node], "xyz", TextType.BOLD)
-        #self.assertEqual(result, [node])
-
-
+        resultxyz = split_nodes_delimiter([node], "xyz", TextType.BOLD)
+        resultxy = split_nodes_delimiter([node], "xy", TextType.ITALIC)
+        self.assertEqual(resultxyz[0].text, resultxy[0].text)
+        self.assertNotEqual(resultxyz[1].text_type, resultxy[1].text_type)
 
     def test_unmatched(self):
-        #print("testing unmatched delimiter")
         node = TextNode("This is a an *unmatched node", TextType.TEXT)
         with self.assertRaises(ValueError):
             split_nodes_delimiter([node], "*", TextType.BOLD)
 
     def test_multiple_delimiters(self):
-        #print("testing multiple  delimiters")
         node = TextNode("This has *multiple* *delimiters*", TextType.TEXT)
         result = split_nodes_delimiter([node], "*", TextType.BOLD)
-        self.assertEqual(str(result[3]), " ")
+        self.assertEqual(result[0].text, "This has ")
+        self.assertEqual(result[1].text, "multiple")
+        self.assertEqual(result[2].text, " ")
+        self.assertEqual(result[3].text, "delimiters")
 
 def test_multiple_nodes(self):
-        #print("testing multiple  delimiters")
         node = TextNode("This is the *first* line", TextType.TEXT)
         node1 = TextNode("This is the *second* line", TextType.TEXT)
         node2 = TextNode("This is the third line (with no formatting)", TextType.TEXT)
         node3 = TextNode("This is the fourth (*last*) line", TextType.TEXT)
-
-        html_node = text_node_to_html_node(node)
-        html_node1 = text_node_to_html_node(node1)
-        html_node2 = text_node_to_html_node(node2)
-        html_node3 = text_node_to_html_node(node3)
-
-        old_nodes = [html_node, html_node1, html_node2, html_node3]
-
-        #self.assertEqual(html_node.tag, None)
+        old_nodes = [node, node1, node2, node3]
         result = split_nodes_delimiter(old_nodes, "*", TextType.BOLD)
-        #self.assertEqual(result, [node])
+        self.assertEqual(4, len(result))
+        self.assertEqual(result[0][0].text, "This is the ")
+        self.assertEqual(result[0][0].text_type, TextType.TEXT) 
+        self.assertEqual(result[1][1].text, "second")
+        self.assertEqual(result[1][1].text_type, TextType.BOLD)
+        self.assertEqual(result[4][4].text, ") line")
 
 
 
