@@ -1,5 +1,5 @@
 import unittest
-from textnode import TextNode, TextType, text_node_to_html_node
+from regex import extract_markdown_images, extract_markdown_links
 
 class TestRegex(unittest.TestCase):
     def test_link(self):
@@ -10,6 +10,12 @@ class TestRegex(unittest.TestCase):
 
     def test_image(self):
         node = TextNode("alt text for image", TextType.IMAGE, "https://imgur.com")
+
+
+class TestTextNode(unittest.TestCase):
+
+    def test_md_images(self):
+        text = "alt text for image", TextType.IMAGE, "https://imgur.com")
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "img")
         self.assertEqual(html_node.props['src'], "https://imgur.com")
@@ -28,8 +34,6 @@ def test_extract_markdown_images(self):
                   "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
                       )
       self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
-
-
 
 
 if __name__ == "__main__":
