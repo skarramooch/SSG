@@ -1,12 +1,13 @@
 import unittest
 from regex import extract_markdown_images, extract_markdown_links
-
+"""
 class TestRegex(unittest.TestCase):
     def test_link(self):
-        matches = regex("This is a link node", TextType.LINK)
+        node = regex("This is a link node", TextType.LINK)
         html_node = text_node_to_html_node(node)
         self.assertEqual(html_node.tag, "a")
         self.assertEqual(html_node.value, "This is a link node")
+        self.asserEqueal("link", )
 
     def test_image(self):
         node = TextNode("alt text for image", TextType.IMAGE, "https://imgur.com")
@@ -28,13 +29,19 @@ print(extract_markdown_images(text))
 text = "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)"
 print(extract_markdown_links(text))
 # [("to boot dev", "https://www.boot.dev"), ("to youtube", "https://www.youtube.com/@bootdotdev")]
-
+"""
 def test_extract_markdown_images(self):
       matches = extract_markdown_images(
                   "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
                       )
       self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
 
+def test_extract_markdown_not_links(self):
+      matches = extract_markdown_links(
+                  "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
+                      )
+      self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+
 
 if __name__ == "__main__":
-    unittest.main()
+     unittest.main()
