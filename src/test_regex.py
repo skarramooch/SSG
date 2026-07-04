@@ -4,15 +4,32 @@ from regex import extract_markdown_images, extract_markdown_links
 class TestRegex(unittest.TestCase):
     def test_extract_markdown_images(self):
         matches = extract_markdown_images(
-            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
+            "this is an image, should be equal  ![image](https://i.imgur.com/zjjcJKZ.png)"
                 )
         self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
 
     def test_extract_markdown_not_links(self):
         matches = extract_markdown_links(
-            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)"
+            "This is text with piccy. should not extract ![image](https://i.imgur.com/zjjcJKZ.png)"
                 )
-        self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
+        self.assertListEqual([], matches)
+
+    def test_extract_markdown_link(self):
+        matches = extract_markdown_images(
+            "This is linked text [my personal creation](https://skarramooch.zapto.org)"
+                )
+        self.assertListEqual([("my personal creation", "https://skarramooch.zapto.org")], matches)
+
+    def test_extract_markdown_not_image(self):
+        matches = extract_markdown_images(
+            "This is another link [this shouldnt work](https://avalanche.zapto.org)"
+                )
+        self.assertListEqual([], matches)
+
+
+
+
+
 """
     def test_link(self):
         node = regex("This is a link node", TextType.LINK)
