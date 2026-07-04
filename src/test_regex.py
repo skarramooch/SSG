@@ -5,28 +5,32 @@ class TestRegex(unittest.TestCase):
     def test_extract_markdown_images(self):
         matches = extract_markdown_images(
             "this is an image, should be equal  ![image](https://i.imgur.com/zjjcJKZ.png)"
-                )
+        )
         self.assertListEqual([("image", "https://i.imgur.com/zjjcJKZ.png")], matches)
 
     def test_extract_markdown_not_links(self):
         matches = extract_markdown_links(
             "This is text with piccy. should not extract ![image](https://i.imgur.com/zjjcJKZ.png)"
-                )
+        )
         self.assertListEqual([], matches)
 
     def test_extract_markdown_link(self):
-        matches = extract_markdown_images(
+        matches = extract_markdown_links(
             "This is linked text [my personal creation](https://skarramooch.zapto.org)"
-                )
+        )
         self.assertListEqual([("my personal creation", "https://skarramooch.zapto.org")], matches)
 
     def test_extract_markdown_not_image(self):
         matches = extract_markdown_images(
             "This is another link [this shouldnt work](https://avalanche.zapto.org)"
-                )
+        )
         self.assertListEqual([], matches)
 
-
+    def test_extra_square_brackets(self):
+        matches = extract_markdown_images(
+            "This will have some extra brackets in the alt text [extra [brackets] here](https://bracketyfun.org)"
+        )
+        self.assertListEqual([("extra [brackets] here", "https://bracketyfun.org")], matches)
 
 
 
