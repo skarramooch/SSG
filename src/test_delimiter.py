@@ -74,12 +74,21 @@ def test_multiple_nodes(self):
 
 
 class TestSplitter(unittest.TestCase):
-    def test_image_splitter(self):
+    def test__link_splitter(self):
         node = TextNode(
             "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
             TextType.TEXT,
             )
         new_nodes = split_nodes_link([node])
+
+    def test_image_splitter(self):
+        node = TextNode(
+            "This is text with an image ![image](https://www.piccystore.com) and ![image](https://www.cartoonwarehouse.org.nz)",
+            TextType.TEXT,
+            )
+        new_nodes = split_nodes_image([node])
+
+
 
 #class TestDelimiter(unittest.TestCase):
  

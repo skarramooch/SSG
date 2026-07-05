@@ -27,14 +27,21 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 
     return new_nodes
 
+# PLAN
+# use regex fns to split links and store in memory
+# not sure how to split it out now
+# maybe 
 
 def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
     for node in old_nodes:
-        print(f"[split_nodes_image node] {node}")
-        new_node = extract_markdown_images(node)
-        print(f"[split_nodes_image new_node] {new_node}")
+        print(f"\n[split_nodes_image node] {node}")
+        print(f"[split_nodes_image node.text] {node.text}")
+        new_images = extract_markdown_images(node.text)
+        print(f"[split_nodes_image new_node] {new_images}")
+
 def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
     for node in old_nodes:
-        print(f"[split_nodes_link node] {node}")
-        new_node = extract_markdown_links(node)
-        print(f"[split_nodes_link new_node] {new_node}")
+        print(f"\n[split_nodes_link node] {node}")
+        print(f"[split_nodes_link node.text] {node.text}")
+        new_links = extract_markdown_links(node.text)
+        print(f"[split_nodes_link new_node] {new_links}")
