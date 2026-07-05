@@ -14,7 +14,7 @@ class TestRegex(unittest.TestCase):
         )
         self.assertListEqual([], matches)
 
-    def test_extract_markdown_link(self):
+    def test_extract_markdown_links(self):
         matches = extract_markdown_links(
             "This is linked text [my personal creation](https://skarramooch.zapto.org)"
         )
@@ -26,11 +26,24 @@ class TestRegex(unittest.TestCase):
         )
         self.assertListEqual([], matches)
 
-    def test_extra_square_brackets(self):
-        matches = extract_markdown_images(
+    def test_extra_square_brackets_links(self):
+        matches = extract_markdown_links(
             "This will have some extra brackets in the alt text [extra [brackets] here](https://bracketyfun.org)"
         )
-        self.assertListEqual([("extra [brackets] here", "https://bracketyfun.org")], matches)
+        self.assertListEqual([], matches)
+
+    def test_extra_square_brackets_images(self):
+        matches = extract_markdown_images(
+            "This will have some extra [brackets] in the description ![image](https://bracketyfun.org)"
+        )
+        self.assertListEqual([("image", "https://bracketyfun.org")], matches)
+
+    def test_extra_square_exclaim_images(self):
+        matches = extract_markdown_images(
+            "This will have !some! extra  exclaimations ! in the description ![image](https://punctuationfun.org)"
+        )
+        self.assertListEqual([("image", "https://punctuationfun.org")], matches)
+
 
 
 
