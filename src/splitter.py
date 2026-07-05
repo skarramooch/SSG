@@ -1,5 +1,5 @@
 from textnode import TextType, TextNode
-
+from regex import extract_markdown_images, extract_markdown_links
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     bracket_queue = []
@@ -26,3 +26,15 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
         new_nodes.extend(split_nodes)
 
     return new_nodes
+
+
+def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
+    for node in old_nodes:
+        print(f"[split_nodes_image node] {node}")
+        new_node = extract_markdown_images(node)
+        print(f"[split_nodes_image new_node] {new_node}")
+def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
+    for node in old_nodes:
+        print(f"[split_nodes_link node] {node}")
+        new_node = extract_markdown_links(node)
+        print(f"[split_nodes_link new_node] {new_node}")

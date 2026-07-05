@@ -1,5 +1,5 @@
 import unittest
-from splitter import split_nodes_delimiter
+from splitter import split_nodes_delimiter, split_nodes_image, split_nodes_link
 from textnode import TextNode, TextType, text_node_to_html_node
 
 class TestDelimiter(unittest.TestCase):
@@ -73,4 +73,14 @@ def test_multiple_nodes(self):
         self.assertEqual(result[4][4].text, ") line")
 
 
+class TestSplitter(unittest.TestCase):
+    def test_image_splitter(self):
+        node = TextNode(
+            "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
+            TextType.TEXT,
+            )
+        new_nodes = split_nodes_link([node])
+
+#class TestDelimiter(unittest.TestCase):
+ 
 
