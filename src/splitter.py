@@ -35,7 +35,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
     for node in old_nodes:
         print(f"\n[split_nodes_image node] {node}")
-        print(f"[split_nodes_image node.text] {node.text}")
+        print(f"[split_nodes_image node.text] {node.text }")
         new_images = extract_markdown_images(node.text)
         print(f"[split_nodes_image new_node] {new_images}")
 
@@ -45,3 +45,9 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
         print(f"[split_nodes_link node.text] {node.text}")
         new_links = extract_markdown_links(node.text)
         print(f"[split_nodes_link new_node] {new_links}")
+        for seg in new_links:
+            print(f"[seg] {seg}")
+            seg_alt = seg[0]
+            seg_url = seg[1]
+            print(f"[alt text] {seg_alt}")
+            print(f"[url] {seg_url}")
