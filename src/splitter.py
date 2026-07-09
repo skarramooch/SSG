@@ -40,6 +40,7 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
         print(f"[split_nodes_image new_node] {new_images}")
 
 def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
+    new_nodes = []
     for node in old_nodes:
         print(f"\n[split_nodes_link node] {node}")
         print(f"[split_nodes_link node.text] {node.text}")
@@ -53,5 +54,8 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
             seg_url = seg[1]
             print(f"[alt text] {seg_alt}")
             print(f"[url] {seg_url}")
-            subseg.append(node.text.split(seg_alt))
+            subseg.append(node.text.split(f"[{seg_alt}]({seg_url})", 1))
             print(f"\n[subseg] {subseg}\n")
+            new_nodes.append(TextNode(f"'{subseg[0].pop(0)}'", TextType.TEXT))
+            new_nodes.append(TextNode(f"'{seg_alt}'", TextType.LINK, f"({seg_url})"))
+    print(f"returning new_nodes: {new_nodes}")
