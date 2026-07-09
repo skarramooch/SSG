@@ -30,7 +30,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 # PLAN
 # use regex fns to split links and store in memory
 # not sure how to split it out now
-# maybe 
+# hints show I need to split by the product of the regex  
 
 def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
     for node in old_nodes:
@@ -45,9 +45,13 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
         print(f"[split_nodes_link node.text] {node.text}")
         new_links = extract_markdown_links(node.text)
         print(f"[split_nodes_link new_node] {new_links}")
+        subseg = []
+        
         for seg in new_links:
             print(f"[seg] {seg}")
             seg_alt = seg[0]
             seg_url = seg[1]
             print(f"[alt text] {seg_alt}")
             print(f"[url] {seg_url}")
+            subseg.append(node.text.split(seg_alt))
+            print(f"\n[subseg] {subseg}\n")
