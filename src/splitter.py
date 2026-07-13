@@ -36,9 +36,12 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
         for seg in new_images:
             seg_alt = seg[0]
             seg_url = seg[1]
-            node_text = node_text[0].split(f"[{seg_alt}]({seg_url})", 1)
-            new_nodes.append(TextNode(f"{node_text.pop(0)}", TextType.TEXT))
-            new_nodes.append(TextNode(f"!{seg_alt}", TextType.IMAGE, f"({seg_url})"))
+            node_text = node_text[0].split(f"![{seg_alt}]({seg_url})", 1)
+            if node_text[0] != '':
+                new_nodes.append(TextNode(f"{node_text.pop(0)}", TextType.TEXT))
+            else:
+                node_text.pop(0)
+            new_nodes.append(TextNode(f"{seg_alt}", TextType.IMAGE, f"{seg_url}"))
     return new_nodes
         
 def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
@@ -50,6 +53,9 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
             seg_alt = seg[0]
             seg_url = seg[1]
             node_text = node_text[0].split(f"[{seg_alt}]({seg_url})", 1)
-            new_nodes.append(TextNode(f"{node_text.pop(0)}", TextType.TEXT))
+            if node_text[0] != '':
+                new_nodes.append(TextNode(f"{node_text.pop(0)}", TextType.TEXT))
+            else:
+                node_text.pop(0)
             new_nodes.append(TextNode(f"{seg_alt}", TextType.LINK, f"{seg_url}"))
     return new_nodes
