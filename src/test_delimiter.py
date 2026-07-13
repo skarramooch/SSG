@@ -81,10 +81,9 @@ class TestSplitter(unittest.TestCase):
             )
         new_nodes = split_nodes_link([node])
         self.assertEqual(new_nodes[0], TextNode("This is text with a link ", TextType.TEXT))
-        self.assertEqual(new_nodes[1], TextNode("This is text with a link ", TextType.TEXT))
-        self.assertEqual(new_nodes[2], TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"))
-        self.assertEqual(new_nodes[3], TextNode(" and ", TextType.TEXT))
-        self.assertEqual(new_nodes[4], TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"))
+        self.assertEqual(new_nodes[1], TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"))
+        self.assertEqual(new_nodes[2], TextNode(" and ", TextType.TEXT))
+        self.assertEqual(new_nodes[3], TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"))
  
 
 
