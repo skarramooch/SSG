@@ -27,39 +27,34 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 
     return new_nodes
 
-# PLAN
-# use regex fns to split links and store in memory
-# not sure how to split it out now
-# hints show I need to split by the product of the regex  
 
 def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
+    new_nodes = []
     for node in old_nodes:
-        #print(f"\n[split_nodes_image node] {node}")
-        #print(f"[split_nodes_image node.text] {node.text }")
         new_images = extract_markdown_images(node.text)
-        #print(f"[split_nodes_image new_node] {new_images}")
-
+        subseg = []
+        for seg in new_images:
+            seg_alt = seg[0]
+            seg_url = seg[1]
+            subseg.append(node.text.split(f"[{seg_alt}]({seg_url})", 1))
+            new_nodes.append(TextNode(f"{subseg[0].pop(0)}", TextType.TEXT))
+            new_nodes.append(TextNode(f"!{seg_alt}", TextType.IMAGE, f"({seg_url})"))
+            subseg.pop(0)
+    print(new_nodes)
+    return new_nodes
+        
 def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
     new_nodes = []
     for node in old_nodes:
-        print(f"\n[split_nodes_link node] {node}\n")
-        #print(f"[split_nodes_link node.text] {node.text}")
         new_links = extract_markdown_links(node.text)
-        #print(f"[split_nodes_link new_node] {new_links}")
         subseg = []
         
         for seg in new_links:
-            print(f"[seg] {seg}")
             seg_alt = seg[0]
             seg_url = seg[1]
-            print(f"[alt text] {seg_alt}")
-            print(f"[url] {seg_url}")
             subseg.append(node.text.split(f"[{seg_alt}]({seg_url})", 1))
-            print(f"\n[subseg] {subseg}\n")
-            new_nodes.append(TextNode(f"'{subseg[0].pop(0)}'", TextType.TEXT))
-            new_nodes.append(TextNode(f"'{seg_alt}'", TextType.LINK, f"({seg_url})"))
-            print(f"[subseg] {subseg}")
+            new_nodes.append(TextNode(f"{subseg[0].pop(0)}", TextType.TEXT))
+            new_nodes.append(TextNode(f"{seg_alt}", TextType.LINK, f"{seg_url}"))
             subseg.pop(0)
-            print(f"[subseg] {subseg}")
-            print(f"[new_nodes] {new_nodes}\n*********")
-    print(f"returning new_nodes: {new_nodes}")
+    print(f"[new_nodes LINK] {new_nodes}")
+    return new_nodes

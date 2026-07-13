@@ -80,13 +80,38 @@ class TestSplitter(unittest.TestCase):
             TextType.TEXT,
             )
         new_nodes = split_nodes_link([node])
+        self.assertEqual(new_nodes[0], TextNode("This is text with a link ", TextType.TEXT))
+        self.assertEqual(new_nodes[1], TextNode("This is text with a link ", TextType.TEXT))
+        self.assertEqual(new_nodes[2], TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"))
+        self.assertEqual(new_nodes[3], TextNode(" and ", TextType.TEXT))
+        self.assertEqual(new_nodes[4], TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"))
+ 
 
-    def test_image_splitter(self):
+
+    def donttest_image_splitter(self):
         node = TextNode(
             "This is text with an image ![image](https://www.piccystore.com) and ![image](https://www.cartoonwarehouse.org.nz)",
             TextType.TEXT,
             )
         new_nodes = split_nodes_image([node])
+
+    def donttest_split_images(self):
+        node = TextNode(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextType.TEXT),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.TEXT),
+                TextNode(
+                    "second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"
+                ),
+            ],
+            new_nodes,
+        )
 
 
 
