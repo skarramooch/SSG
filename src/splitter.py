@@ -32,31 +32,24 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
     new_nodes = []
     for node in old_nodes:
         new_images = extract_markdown_images(node.text)
-        subseg = []
+        node_text = [node.text]
         for seg in new_images:
             seg_alt = seg[0]
             seg_url = seg[1]
-            subseg.append(node.text.split(f"[{seg_alt}]({seg_url})", 1))
-            new_nodes.append(TextNode(f"{subseg[0].pop(0)}", TextType.TEXT))
+            node_text = node_text[0].split(f"[{seg_alt}]({seg_url})", 1)
+            new_nodes.append(TextNode(f"{node_text.pop(0)}", TextType.TEXT))
             new_nodes.append(TextNode(f"!{seg_alt}", TextType.IMAGE, f"({seg_url})"))
-            subseg.pop(0)
-    print(new_nodes)
     return new_nodes
         
 def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
     new_nodes = []
     for node in old_nodes:
         new_links = extract_markdown_links(node.text)
-        #subseg = []
-        
+        node_text = [node.text]
         for seg in new_links:
-            subseg = []
             seg_alt = seg[0]
             seg_url = seg[1]
-            subseg.append(node.text.split(f"[{seg_alt}]({seg_url})", 1))
-            new_nodes.append(TextNode(f"{subseg[0].pop(0)}", TextType.TEXT))
+            node_text = node_text[0].split(f"[{seg_alt}]({seg_url})", 1)
+            new_nodes.append(TextNode(f"{node_text.pop(0)}", TextType.TEXT))
             new_nodes.append(TextNode(f"{seg_alt}", TextType.LINK, f"{seg_url}"))
-            subseg.pop(0)
-            print(f"[node] {node}") #node.pop(0)
-    print(f"[new_nodes LINK] {new_nodes}")
     return new_nodes

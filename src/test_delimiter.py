@@ -87,7 +87,7 @@ class TestSplitter(unittest.TestCase):
  
 
 
-    def donttest_image_splitter(self):
+    def test_image_splitter(self):
         node = TextNode(
             "This is text with an image ![image](https://www.piccystore.com) and ![image](https://www.cartoonwarehouse.org.nz)",
             TextType.TEXT,
