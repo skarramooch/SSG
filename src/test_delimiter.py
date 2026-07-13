@@ -91,7 +91,7 @@ class TestSplitter(unittest.TestCase):
             TextType.TEXT,
             )
         new_nodes = split_nodes_link([node])
-        #self.assertEqual(new_nodes[0], TextNode("This is text with a link ", TextType.TEXT))
+        self.assertNotEqual(new_nodes[0], TextNode("", TextType.TEXT))
         self.assertEqual(new_nodes[0], TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"))
         self.assertEqual(new_nodes[1], TextNode(" and ", TextType.TEXT))
         self.assertEqual(new_nodes[2], TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev"))
@@ -140,8 +140,43 @@ class TestSplitter(unittest.TestCase):
             new_nodes,
         )
 
+    def test_split_images_blank_alt_text(self):
+        node = TextNode(
+            "This is text with an ![](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertListEqual(
+            [
+                TextNode("This is text with an ", TextType.TEXT),
+                TextNode("", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.TEXT),
+                TextNode(
+                    "second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"
+                ),
+            ],
+            new_nodes,
+        )
+
+    def test_split_images_incorrectly_formed_not_equal(self):
+        node = TextNode(
+            "incorrectly formed [image](https://i.imgur.com/zjjcJKZ.png) and another ![second image](https://i.imgur.com/3elNhQu.png)",
+            TextType.TEXT,
+        )
+        new_nodes = split_nodes_image([node])
+        self.assertNotEqual(
+            [
+                TextNode("incorrectly formed ", TextType.TEXT),
+                TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png"),
+                TextNode(" and another ", TextType.TEXT),
+                TextNode(
+                    "second image", TextType.IMAGE, "https://i.imgur.com/3elNhQu.png"
+                ),
+            ],
+            new_nodes,
+        )
 
 
-#class TestDelimiter(unittest.TestCase):
- 
+
+
 
