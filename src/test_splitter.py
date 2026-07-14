@@ -226,7 +226,7 @@ class TestSplitter(unittest.TestCase):
         self.assertEqual(new_nodes[2], TextNode(" world", TextType.TEXT))
         self.assertEqual(new_nodes[3], TextNode("other_site", TextType.LINK, "otherurl"))
         self.assertEqual(new_nodes[4], TextNode(" aftercheck", TextType.TEXT))
-####
+
     def dont_test_non_text_nodes(self):
         node = TextNode(
             "[site](url) world",
@@ -246,7 +246,7 @@ class TestSplitter(unittest.TestCase):
             "BOLD TEXT NOTE",
             TextType.BOLD,
             )
-         node3 = TextNode(
+        node3 = TextNode(
             "ITALIC NODE",
             TextType.ITALIC,
             )
