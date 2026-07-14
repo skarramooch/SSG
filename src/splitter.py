@@ -59,3 +59,13 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
                 node_text.pop(0)
             new_nodes.append(TextNode(f"{seg_alt}", TextType.LINK, f"{seg_url}"))
     return new_nodes
+
+def text_to_textnodes(text):
+    node = TextNode(text, TextType.TEXT)
+    result_bold = split_nodes_delimiter([node], "**", TextType.BOLD)
+    result_italic = split_nodes_delimiter(result_bold, "_", TextType.ITALIC)
+    result_code = split_nodes_delimiter(result_italic, "`", TextType.CODE)
+    result_image = split_nodes_image(result_code)
+    result_link = split_nodes_link(result_image)
+    print(f"****\n{result_link}\n****")
+    return result_link

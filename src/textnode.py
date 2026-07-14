@@ -47,4 +47,12 @@ def text_node_to_html_node(text_node):
 
 # TextType.LINK: "a" tag, anchor text, and "href" prop
 # TextType.IMAGE: "img" tag, empty string value, "src" and "alt" props ("src" is the image URL, "alt" is the alt text)
-    
+def text_to_textnodes(text):
+    node = TextNode(text, TextType.TEXT)
+    result_bold = split_nodes_delimiter(node, "**", TextType.BOLD)
+    result_italic = split_nodes_delimiter(result_bold, "_", TextType.ITALIC)
+    result_code = split_nodes_delimiter(result_italic, "`", TextType.CODE)
+    result_link = split_nodes_link(result_code)
+    result_image = split_nodes_image(result_link)
+    print(result_image)
+    return result_image
