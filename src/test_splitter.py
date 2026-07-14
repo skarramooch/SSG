@@ -194,5 +194,26 @@ class TestSplitter(unittest.TestCase):
             ]
         )
 
+# a node with no links/images should come back unchanged
+# text before a match should be preserved
+# text after a match should be preserved
+# multiple matches in one node should all be handled
+# non-TEXT nodes should pass through unchanged
+#
+# "hello [site](url) world"
+# Should become:
+# plain "hello "
+# link "site"
+# plain " world"
 
+    def test_text_after_link(self):
+        node = TextNode(
+            "Hello [site](url) world",
+            TextType.TEXT,
+            )
+        new_nodes = split_nodes_link([node])
+        self.assertEqual(new_nodes[0], TextNode("Hello ", TextType.TEXT))
+        self.assertEqual(new_nodes[1], TextNode("site", TextType.LINK, "url"))
+        self.assertEqual(new_nodes[2], TextNode(" world", TextType.TEXT))
+ 
 
