@@ -177,7 +177,104 @@ class TestSplitter(unittest.TestCase):
         )
 
 
-    def test_text_to_textnodes(self):
+    def test_text_after_link(self):
+        node = TextNode(
+            "Hello [site](url) world",
+            TextType.TEXT,
+            )
+        new_nodes = split_nodes_link([node])
+        self.assertEqual(new_nodes[0], TextNode("Hello ", TextType.TEXT))
+        self.assertEqual(new_nodes[1], TextNode("site", TextType.LINK, "url"))
+        self.assertEqual(new_nodes[2], TextNode(" world", TextType.TEXT))
+
+    def dont_test_text_no_link(self):
+        node = TextNode(
+            "Hello site](url) world",
+            TextType.TEXT,
+            )
+        new_nodes = split_nodes_link([node])
+        self.assertEqual(new_nodes[0], TextNode("Hello site](url) world", TextType.TEXT))
+        self.assertNotEqual(new_nodes[1], TextNode("site", TextType.LINK, "url"))
+        self.assertNotEqual(new_nodes[2], TextNode(" world", TextType.TEXT))
+
+    def dont_test_no_text_before_link(self):
+        node = TextNode(
+            "[site](url) world",
+            TextType.TEXT,
+            )
+        new_nodes = split_nodes_link([node])
+        self.assertNotEqual(new_nodes[0], TextNode("Hello ", TextType.TEXT))
+        self.assertEqual(new_nodes[0], TextNode("site", TextType.LINK, "url"))
+        self.assertEqual(new_nodes[1], TextNode(" world", TextType.TEXT))
+
+    def dont_test_no_link(self):
+        node = TextNode(
+            "hello world, **bold** _italic_`code`",
+            TextType.TEXT,
+            )
+        new_nodes = split_nodes_link([node])
+        self.assertEqual(new_nodes[0], TextNode("hello world, **bold** _italic_`code", TextType.TEXT))
+
+    def dont_test_multiple_links(self):
+        node = TextNode(
+            "Hello [site](url) world [other_site](otherurl) aftercheck",
+            TextType.TEXT,
+            )
+        new_nodes = split_nodes_link([node])
+        self.assertEqual(new_nodes[0], TextNode("Hello ", TextType.TEXT))
+        self.assertEqual(new_nodes[1], TextNode("site", TextType.LINK, "url"))
+        self.assertEqual(new_nodes[2], TextNode(" world", TextType.TEXT))
+        self.assertEqual(new_nodes[3], TextNode("other_site", TextType.LINK, "otherurl"))
+        self.assertEqual(new_nodes[4], TextNode(" aftercheck", TextType.TEXT))
+####
+    def dont_test_non_text_nodes(self):
+        node = TextNode(
+            "[site](url) world",
+            TextType.BOLD,
+            )
+        new_nodes = split_nodes_link([node])
+        self.assertNotEqual(new_nodes[0], TextNode("Hello ", TextType.TEXT))
+        self.assertEqual(new_nodes[0], TextNode("site", TextType.LINK, "url"))
+        self.assertEqual(new_nodes[1], TextNode(" world", TextType.TEXT))
+
+    def dont_test_unchanged(self):
+        node1 = TextNode(
+            "Plain Text Node",
+            TextType.TEXT,
+            )
+        node2 = TextNode(
+            "BOLD TEXT NOTE",
+            TextType.BOLD,
+            )
+         node3 = TextNode(
+            "ITALIC NODE",
+            TextType.ITALIC,
+            )
+        node4 = TextNode(
+            "CODE NODE",
+            TextType.CODE,
+            )
+        node5 = TextNode(
+            "image ![alt_text](image_url) node",
+            TextType.TEXT,
+            )
+        nodes = [node1, node2, node3, node4, node5]
+        new_nodes = split_nodes_link([node])
+        self.assertEqual(new_nodes[0], TextNode("Plain Text Node", TextType.TEXT))
+        self.assertEqual(new_nodes[1], TextNode("BOLD TEXT NODE", TextType.BOLD))
+        self.assertEqual(new_nodes[2], TextNode("ITALIC NODE", TextType.ITALIC))
+        self.assertEqual(new_nodes[3], TextNode("CODE NODE", TextType.CODE))
+        self.assertEqual(new_nodes[4], TextNode("image ![alt_text](image_url) node", TextType.ITALIC))
+
+
+
+######
+
+
+
+
+
+    def dont_test_text_to_textnodes(self):
         text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
         result = text_to_textnodes(text)
         self.assertEqual(result, [
@@ -197,23 +294,10 @@ class TestSplitter(unittest.TestCase):
 # a node with no links/images should come back unchanged
 # text before a match should be preserved
 # text after a match should be preserved
+# no text before and after should also be preserved
 # multiple matches in one node should all be handled
 # non-TEXT nodes should pass through unchanged
 #
-# "hello [site](url) world"
-# Should become:
-# plain "hello "
-# link "site"
-# plain " world"
 
-    def test_text_after_link(self):
-        node = TextNode(
-            "Hello [site](url) world",
-            TextType.TEXT,
-            )
-        new_nodes = split_nodes_link([node])
-        self.assertEqual(new_nodes[0], TextNode("Hello ", TextType.TEXT))
-        self.assertEqual(new_nodes[1], TextNode("site", TextType.LINK, "url"))
-        self.assertEqual(new_nodes[2], TextNode(" world", TextType.TEXT))
  
 
