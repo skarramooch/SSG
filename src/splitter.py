@@ -32,15 +32,13 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
     new_nodes = []
     for node in old_nodes:
         new_images = extract_markdown_images(node.text)
-        node_text = [node.text]
+        remaining = node.text
         for seg in new_images:
             seg_alt = seg[0]
             seg_url = seg[1]
-            node_text = node_text[0].split(f"![{seg_alt}]({seg_url})", 1)
-            if node_text[0] != '':
-                new_nodes.append(TextNode(f"{node_text.pop(0)}", TextType.TEXT))
-            else:
-                node_text.pop(0)
+            before, remaining = remaining.split(f"![{seg_alt}]({seg_url})", 1)
+            if before is not None and before != '':
+                new_nodes.append(TextNode(before, TextType.TEXT))
             new_nodes.append(TextNode(f"{seg_alt}", TextType.IMAGE, f"{seg_url}"))
     return new_nodes
         
@@ -48,23 +46,17 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
     new_nodes = []
     for node in old_nodes:
         new_links = extract_markdown_links(node.text)
-        node_text = [node.text]
+        remaining = node.text
         for seg in new_links:
             seg_alt = seg[0]
             seg_url = seg[1]
-            node_text = node_text[0].split(f"[{seg_alt}]({seg_url})", 1)
-            print(f"[node_text] {node_text}")
-            if node_text[0] != '':
-                new_nodes.append(TextNode(f"{node_text.pop(0)}", TextType.TEXT))
-            else:
-                node_text.pop(0)
+            before, remaining = remaining.split(f"[{seg_alt}]({seg_url})", 1)
+            if before is not None and before != '':
+                new_nodes.append(TextNode(before, TextType.TEXT))
             new_nodes.append(TextNode(f"{seg_alt}", TextType.LINK, f"{seg_url}"))
-            print(f"[node_text] {node_text}")
- 
-            if node_text[0] != '':
-                print(f"i need to preserve this: {node_text[0]}")
-                new_nodes.append(TextNode(f"{node_text.pop(0)}", TextType.TEXT))
- 
+
+        if remaining is not None and remaining != '':
+            new_nodes.append(TextNode(remaining, TextType.TEXT))
     return new_nodes
 
 def text_to_textnodes(text):

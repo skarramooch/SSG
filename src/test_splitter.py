@@ -187,17 +187,16 @@ class TestSplitter(unittest.TestCase):
         self.assertEqual(new_nodes[1], TextNode("site", TextType.LINK, "url"))
         self.assertEqual(new_nodes[2], TextNode(" world", TextType.TEXT))
 
-    def dont_test_text_no_link(self):
+    def test_text_no_link(self):
         node = TextNode(
             "Hello site](url) world",
             TextType.TEXT,
             )
         new_nodes = split_nodes_link([node])
         self.assertEqual(new_nodes[0], TextNode("Hello site](url) world", TextType.TEXT))
-        self.assertNotEqual(new_nodes[1], TextNode("site", TextType.LINK, "url"))
-        self.assertNotEqual(new_nodes[2], TextNode(" world", TextType.TEXT))
+        self.assertEqual(len(new_nodes), 1)
 
-    def dont_test_no_text_before_link(self):
+    def test_no_text_before_link(self):
         node = TextNode(
             "[site](url) world",
             TextType.TEXT,
@@ -207,15 +206,15 @@ class TestSplitter(unittest.TestCase):
         self.assertEqual(new_nodes[0], TextNode("site", TextType.LINK, "url"))
         self.assertEqual(new_nodes[1], TextNode(" world", TextType.TEXT))
 
-    def dont_test_no_link(self):
+    def test_no_link(self):
         node = TextNode(
             "hello world, **bold** _italic_`code`",
             TextType.TEXT,
             )
         new_nodes = split_nodes_link([node])
-        self.assertEqual(new_nodes[0], TextNode("hello world, **bold** _italic_`code", TextType.TEXT))
+        self.assertEqual(new_nodes[0], TextNode("hello world, **bold** _italic_`code`", TextType.TEXT))
 
-    def dont_test_multiple_links(self):
+    def test_multiple_links(self):
         node = TextNode(
             "Hello [site](url) world [other_site](otherurl) aftercheck",
             TextType.TEXT,
@@ -223,11 +222,11 @@ class TestSplitter(unittest.TestCase):
         new_nodes = split_nodes_link([node])
         self.assertEqual(new_nodes[0], TextNode("Hello ", TextType.TEXT))
         self.assertEqual(new_nodes[1], TextNode("site", TextType.LINK, "url"))
-        self.assertEqual(new_nodes[2], TextNode(" world", TextType.TEXT))
+        self.assertEqual(new_nodes[2], TextNode(" world ", TextType.TEXT))
         self.assertEqual(new_nodes[3], TextNode("other_site", TextType.LINK, "otherurl"))
         self.assertEqual(new_nodes[4], TextNode(" aftercheck", TextType.TEXT))
 
-    def dont_test_non_text_nodes(self):
+    def test_non_text_nodes(self):
         node = TextNode(
             "[site](url) world",
             TextType.BOLD,
@@ -237,7 +236,7 @@ class TestSplitter(unittest.TestCase):
         self.assertEqual(new_nodes[0], TextNode("site", TextType.LINK, "url"))
         self.assertEqual(new_nodes[1], TextNode(" world", TextType.TEXT))
 
-    def dont_test_unchanged(self):
+    def test_unchanged(self):
         node1 = TextNode(
             "Plain Text Node",
             TextType.TEXT,
@@ -259,13 +258,18 @@ class TestSplitter(unittest.TestCase):
             TextType.TEXT,
             )
         nodes = [node1, node2, node3, node4, node5]
-        new_nodes = split_nodes_link([node])
-        self.assertEqual(new_nodes[0], TextNode("Plain Text Node", TextType.TEXT))
-        self.assertEqual(new_nodes[1], TextNode("BOLD TEXT NODE", TextType.BOLD))
-        self.assertEqual(new_nodes[2], TextNode("ITALIC NODE", TextType.ITALIC))
-        self.assertEqual(new_nodes[3], TextNode("CODE NODE", TextType.CODE))
-        self.assertEqual(new_nodes[4], TextNode("image ![alt_text](image_url) node", TextType.ITALIC))
-
+        new_nodes = []
+        for node in nodes:
+            new_nodes.append(split_nodes_link([node]))
+            print(f"[node] {node}")
+            print(f"[new_nodes] {new_nodes}")
+        self.assertListEqual([
+            TextNode("Plain Text Node", TextType.TEXT),
+            TextNode("BOLD TEXT NODE", TextType.BOLD),
+            TextNode("ITALIC NODE", TextType.ITALIC),
+            TextNode("CODE NODE", TextType.CODE),
+            TextNode("image ![alt_text](image_url) node", TextType.ITALIC)],
+                new_nodes,)
 
 
 ######
