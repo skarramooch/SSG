@@ -246,9 +246,10 @@ class TestSplitter(unittest.TestCase):
             TextType.BOLD,
             )
         new_nodes = split_nodes_link([node])
-        self.assertNotEqual(new_nodes[0], TextNode("Hello ", TextType.TEXT))
-        self.assertEqual(new_nodes[0], TextNode("site", TextType.LINK, "url"))
-        self.assertEqual(new_nodes[1], TextNode(" world", TextType.TEXT))
+        self.assertNotEqual(new_nodes, [
+            TextNode("Hello ", TextType.TEXT),
+            TextNode("site", TextType.LINK, "url"),
+            TextNode(" world", TextType.TEXT)])
 
     def test_unchanged(self):
         node1 = TextNode(
