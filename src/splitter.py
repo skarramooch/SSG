@@ -29,7 +29,7 @@ def split_nodes_delimiter(old_nodes, delimiter, text_type):
 
 
 def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
-    new_nodes = []
+    new_nodes_str = ''
     for node in old_nodes:
         new_images = extract_markdown_images(node.text)
         remaining = node.text
@@ -38,13 +38,16 @@ def split_nodes_image(old_nodes: list[TextNode]) -> list[TextNode]:
             seg_url = seg[1]
             before, remaining = remaining.split(f"![{seg_alt}]({seg_url})", 1)
             if before is not None and before != '':
-                new_nodes.append(TextNode(before, TextType.TEXT))
-            new_nodes.append(TextNode(f"{seg_alt}", TextType.IMAGE, f"{seg_url}"))
-    return new_nodes
+                #new_nodes.append(TextNode(before, TextType.TEXT))
+            #new_nodes.append(TextNode(f"{seg_alt}", TextType.IMAGE, f"{seg_url}"))
+                new_nodes_str += f'(TextNode({before}, TextType.TEXT))'
+            new_nodes_str += f'(TextNode(f"{seg_alt}", TextType.IMAGE, f"{seg_url}"))'
+    return new_nodes_str
         
 def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
-    new_nodes = []
+    new_nodes_list = []
     for node in old_nodes:
+        #new_nodes_list = []
         new_links = extract_markdown_links(node.text)
         remaining = node.text
         for seg in new_links:
@@ -52,12 +55,13 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
             seg_url = seg[1]
             before, remaining = remaining.split(f"[{seg_alt}]({seg_url})", 1)
             if before is not None and before != '':
-                new_nodes.append(TextNode(before, TextType.TEXT))
-            new_nodes.append(TextNode(f"{seg_alt}", TextType.LINK, f"{seg_url}"))
+                new_nodes_list.append(TextNode(f'{before}', TextType.TEXT))
+            new_nodes_list.append(TextNode(f'{seg_alt}', TextType.LINK, f'{seg_url}'))
 
         if remaining is not None and remaining != '':
-            new_nodes.append(TextNode(remaining, TextType.TEXT))
-    return new_nodes
+            new_nodes_list.append(TextNode(f'{remaining}', TextType.TEXT))
+        #new_nodes.append(new_nodes_list)
+    return new_nodes_list
 
 def text_to_textnodes(text):
     node = TextNode(text, TextType.TEXT)
