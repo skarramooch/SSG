@@ -84,8 +84,8 @@ class TestSplitter(unittest.TestCase):
         self.assertEqual(new_nodes, [
             TextNode("This is text with a link ", TextType.TEXT),
             TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
-        TextNode(" and ", TextType.TEXT),
-        TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev")
+            TextNode(" and ", TextType.TEXT),
+            TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev")
         ])
 
     def dont_test_link_splitter(self):
@@ -256,7 +256,7 @@ class TestSplitter(unittest.TestCase):
             TextType.TEXT
             )
         node2 = TextNode(
-            "BOLD TEXT NOTE",
+            "BOLD TEXT NODE",
             TextType.BOLD
             )
         node3 = TextNode(
@@ -272,17 +272,15 @@ class TestSplitter(unittest.TestCase):
             TextType.TEXT
             )
         nodes = [node1, node2, node3, node4, node5]
-        new_nodes = []
-        for node in nodes:
-            new_nodes.append(split_nodes_link([node]))
-            print(f"\n[node] {node}")
-            print(f"[new_nodes] {new_nodes}")
+        new_nodes = split_nodes_link(nodes)
+        print(f"\n[nodes] {nodes}")
+        print(f"[new_nodes] {new_nodes}")
         self.assertListEqual(new_nodes, [
             TextNode("Plain Text Node", TextType.TEXT),
             TextNode("BOLD TEXT NODE", TextType.BOLD),
             TextNode("ITALIC NODE", TextType.ITALIC),
             TextNode("CODE NODE", TextType.CODE),
-            TextNode("image ![alt_text](image_url) node", TextType.ITALIC)])
+            TextNode("image ![alt_text](image_url) node", TextType.TEXT)])
 
 ######
 
