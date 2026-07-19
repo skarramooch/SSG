@@ -80,7 +80,6 @@ class TestSplitter(unittest.TestCase):
             TextType.TEXT,
             )
         new_nodes = split_nodes_link([node])
-        print(repr(new_nodes))
         self.assertEqual(new_nodes, [
             TextNode("This is text with a link ", TextType.TEXT),
             TextNode("to boot dev", TextType.LINK, "https://www.boot.dev"),
@@ -274,8 +273,6 @@ class TestSplitter(unittest.TestCase):
             )
         nodes = [node1, node2, node3, node4, node5]
         new_nodes = split_nodes_link(nodes)
-        print(f"\n[nodes] {nodes}")
-        print(f"[new_nodes] {new_nodes}")
         self.assertListEqual(new_nodes, [
             TextNode("Plain Text Node", TextType.TEXT),
             TextNode("BOLD TEXT NODE", TextType.BOLD),
@@ -289,9 +286,10 @@ class TestSplitter(unittest.TestCase):
 
 
 
-    def dont_test_text_to_textnodes(self):
+    def test_text_to_textnodes(self):
         text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
         result = text_to_textnodes(text)
+
         self.assertEqual(result, [
             TextNode("This is ", TextType.TEXT),
             TextNode("text", TextType.BOLD),
