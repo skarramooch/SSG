@@ -1,5 +1,6 @@
 from textnode import TextType, TextNode
 from regex import extract_markdown_images, extract_markdown_links
+import re
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     bracket_queue = []
@@ -76,8 +77,11 @@ def text_to_textnodes(text):
 
 def markdown_to_blocks(md):
     blocks = []
-    newline_split_md = md.strip().split("\n\n")
-    for block in newline_split_md:
+    splitted = md.split("\n\n")
+    stripped = []
+    for block in splitted:
+        stripped.append(block.strip())
+    for block in stripped:
         if block != '':
             blocks.append(block)
     return blocks
