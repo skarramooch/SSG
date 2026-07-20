@@ -58,19 +58,19 @@ class TestDelimiter(unittest.TestCase):
         self.assertEqual(result[2].text, " ")
         self.assertEqual(result[3].text, "delimiters")
 
-def test_multiple_nodes(self):
+    def test_multiple_nodes(self):
         node = TextNode("This is the *first* line", TextType.TEXT)
         node1 = TextNode("This is the *second* line", TextType.TEXT)
         node2 = TextNode("This is the third line (with no formatting)", TextType.TEXT)
         node3 = TextNode("This is the fourth (*last*) line", TextType.TEXT)
         old_nodes = [node, node1, node2, node3]
         result = split_nodes_delimiter(old_nodes, "*", TextType.BOLD)
-        self.assertEqual(4, len(result))
-        self.assertEqual(result[0][0].text, "This is the ")
-        self.assertEqual(result[0][0].text_type, TextType.TEXT) 
-        self.assertEqual(result[1][1].text, "second")
-        self.assertEqual(result[1][1].text_type, TextType.BOLD)
-        self.assertEqual(result[4][4].text, ") line")
+        self.assertEqual(10, len(result))
+        self.assertEqual(result[0].text, "This is the ")
+        self.assertEqual(result[0].text_type, TextType.TEXT) 
+        self.assertEqual(result[1].text, "first")
+        self.assertEqual(result[1].text_type, TextType.BOLD)
+        self.assertEqual(result[9].text, ") line")
 
 
 class TestSplitter(unittest.TestCase):
@@ -87,7 +87,7 @@ class TestSplitter(unittest.TestCase):
             TextNode("to youtube", TextType.LINK, "https://www.youtube.com/@bootdotdev")
         ])
 
-    def dont_test_link_splitter(self):
+    def test_link_splitter(self):
         node = TextNode(
             "This is text with a link [to boot dev](https://www.boot.dev) and [to youtube](https://www.youtube.com/@bootdotdev)",
             TextType.TEXT,
@@ -117,6 +117,14 @@ class TestSplitter(unittest.TestCase):
             TextType.TEXT,
             )
         new_nodes = split_nodes_image([node])
+        self.assertEqual(new_nodes, [
+            TextNode("This is text with an image ", TextType.TEXT),
+            TextNode("image", TextType.IMAGE,  "https://www.piccystore.com"),
+            TextNode(" and ", TextType.TEXT),
+            TextNode("image", TextType.IMAGE, "https://www.cartoonwarehouse.org.nz")
+            ]
+        )
+ 
 
     def test_split_images(self):
         node = TextNode(
@@ -280,12 +288,7 @@ class TestSplitter(unittest.TestCase):
             TextNode("CODE NODE", TextType.CODE),
             TextNode("image ![alt_text](image_url) node", TextType.TEXT)])
 
-######
-
-
-
-
-
+class Testtotextnodes(unittest.TestCase):
     def test_text_to_textnodes(self):
         text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
         result = text_to_textnodes(text)
@@ -304,13 +307,102 @@ class TestSplitter(unittest.TestCase):
             ] 
         )
 
-# a node with no links/images should come back unchanged
-# text before a match should be preserved
-# text after a match should be preserved
-# no text before and after should also be preserved
-# multiple matches in one node should all be handled
-# non-TEXT nodes should pass through unchanged
-#
-
  
+    def test_text_to_textnodes_one_valueerror(self):
+        with self.assertRaises(ValueError):
+            text = "This is text with only **bold** taxt and a few unbalanced delimiters - star * underscore - backtick ` and exclamationmarksquarebracket!["
+            result = text_to_textnodes(text)
+
+    def test_text_to_textnodes_two_double_adjacent(self):
+        text = "**text1****text2** with * an _italic_ _ word _ and a `code``block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        result = text_to_textnodes(text)
+
+        self.assertEqual(result, [
+            TextNode("text1", TextType.BOLD),
+            TextNode("text2", TextType.BOLD),
+            TextNode(" with * an ", TextType.TEXT),
+            TextNode("italic", TextType.ITALIC),
+            TextNode(" ", TextType.TEXT),
+            TextNode(" word ", TextType.ITALIC),
+            TextNode(" and a ", TextType.TEXT),
+            TextNode("code", TextType.CODE),
+            TextNode("block", TextType.CODE),
+            TextNode(" and an ", TextType.TEXT),
+            TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+            TextNode(" and a ", TextType.TEXT),
+            TextNode("link", TextType.LINK, "https://boot.dev"),
+            ] 
+        )
+
+    def test_text_to_textnodes_three_multiple_links(self):
+        text = "[link1](https://boot1.dev)[link2](https://boot2.dev)[link3](https://boot3.dev)[link4](https://boot4.dev)"
+        result = text_to_textnodes(text)
+
+        self.assertEqual(result, [
+            TextNode("link1", TextType.LINK, "https://boot1.dev"),
+            TextNode("link2", TextType.LINK, "https://boot2.dev"),
+            TextNode("link3", TextType.LINK, "https://boot3.dev"),
+            TextNode("link4", TextType.LINK, "https://boot4.dev"),
+            ] 
+        )
+
+    def test_text_to_textnodes_four_excl_multiple_images(self):
+        text = "!![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and [notAlink] a [link](https://boot.dev)"
+        result = text_to_textnodes(text)
+
+        self.assertEqual(result, [
+            TextNode("!", TextType.TEXT),
+            TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+            TextNode(" and [notAlink] a ", TextType.TEXT),
+            TextNode("link", TextType.LINK, "https://boot.dev"),
+            ] 
+        )
+
+    def test_text_to_textnodes_five_special_chars(self):
+        text = "This is text with \nnew lines\nan asterisk '*'\n and some other charachers !@#$%^()+=-[]{}|;:?/>.<,~\nthats my lot!"
+        result = text_to_textnodes(text)
+
+        self.assertEqual(result, [
+            TextNode("This is text with \nnew lines\nan asterisk '*'\n and some other charachers !@#$%^()+=-[]{}|;:?/>.<,~\nthats my lot!", TextType.TEXT)
+            ] 
+        )
+
+    def test_text_to_textnodes_six_escape_seq(self):
+        text = "T\n Newline – Moves the cursor to the next line.\n\t	Tab – Adds a horizontal tab.\n\\	Backslash – Inserts a literal backslash.\n\'	Single Quote – Inserts a single quote inside a single-quoted string.\n\"	Double Quote – Inserts a double quote inside a double-quoted string.\n\r	Carriage Return – Moves the cursor to the beginning of the line.\n\b	Backspace – Moves the cursor one position back, effectively deleting the last character.\n\f	Form Feed – Moves the cursor to the next page.\n\v	Vertical Tab – Moves the cursor vertically.\n\x41	Hexadecimal – Represents a character using hexadecimal value 41.\nhis is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+
+        result = text_to_textnodes(text)
+
+        self.assertEqual(result, [
+            TextNode("T\n Newline – Moves the cursor to the next line.\n\t	Tab – Adds a horizontal tab.\n\\	Backslash – Inserts a literal backslash.\n\'	Single Quote – Inserts a single quote inside a single-quoted string.\n\"	Double Quote – Inserts a double quote inside a double-quoted string.\n\r	Carriage Return – Moves the cursor to the beginning of the line.\n\b	Backspace – Moves the cursor one position back, effectively deleting the last character.\n\f	Form Feed – Moves the cursor to the next page.\n\v	Vertical Tab – Moves the cursor vertically.\n\x41	Hexadecimal – Represents a character using hexadecimal value 41.\nhis is ", TextType.TEXT),
+            TextNode("text", TextType.BOLD),
+            TextNode(" with an ", TextType.TEXT),
+            TextNode("italic", TextType.ITALIC),
+            TextNode(" word and a ", TextType.TEXT),
+            TextNode("code block", TextType.CODE),
+            TextNode(" and an ", TextType.TEXT),
+            TextNode("obi wan image", TextType.IMAGE, "https://i.imgur.com/fJRm4Vk.jpeg"),
+            TextNode(" and a ", TextType.TEXT),
+            TextNode("link", TextType.LINK, "https://boot.dev"),
+            ] 
+        )
+
+    def test_text_to_textnodes_seven_ALL_CAPS(self):
+        text = "This is **text** with an _italic_ word and a `code block` and an ![obi wan image](https://i.imgur.com/fJRm4Vk.jpeg) and a [link](https://boot.dev)"
+        utext = text.upper()
+        result = text_to_textnodes(utext)
+
+        self.assertEqual(result, [
+            TextNode("THIS IS ", TextType.TEXT),
+            TextNode("TEXT", TextType.BOLD),
+            TextNode(" WITH AN ", TextType.TEXT),
+            TextNode("ITALIC", TextType.ITALIC),
+            TextNode(" WORD AND A ", TextType.TEXT),
+            TextNode("CODE BLOCK", TextType.CODE),
+            TextNode(" AND AN ", TextType.TEXT),
+            TextNode("OBI WAN IMAGE", TextType.IMAGE, "HTTPS://I.IMGUR.COM/FJRM4VK.JPEG"),
+            TextNode(" AND A ", TextType.TEXT),
+            TextNode("LINK", TextType.LINK, "HTTPS://BOOT.DEV"),
+            ] 
+        )
+
 
