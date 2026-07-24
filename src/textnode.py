@@ -16,7 +16,6 @@ class TextNode:
         self.url= url
 
     def __eq__(self, other):
-        #print(f"[eq called] self = {self} other = {other}")
         if self.text_type == other.text_type:
             if self.text == other.text:
                 if self.url == other.url:
@@ -45,8 +44,6 @@ def text_node_to_html_node(text_node):
     else:
         raise Exception("no chukka chukka")
 
-# TextType.LINK: "a" tag, anchor text, and "href" prop
-# TextType.IMAGE: "img" tag, empty string value, "src" and "alt" props ("src" is the image URL, "alt" is the alt text)
 def text_to_textnodes(text):
     node = TextNode(text, TextType.TEXT)
     result_bold = split_nodes_delimiter(node, "**", TextType.BOLD)
@@ -54,5 +51,4 @@ def text_to_textnodes(text):
     result_code = split_nodes_delimiter(result_italic, "`", TextType.CODE)
     result_link = split_nodes_link(result_code)
     result_image = split_nodes_image(result_link)
-    print(result_image)
     return result_image

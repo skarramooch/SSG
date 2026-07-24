@@ -1,6 +1,7 @@
 from textnode import TextType, TextNode
 from regex import extract_markdown_images, extract_markdown_links
 import re
+from enum import Enum
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     bracket_queue = []
@@ -87,3 +88,23 @@ def markdown_to_blocks(md):
     return blocks
 
 
+class BlockType(Enum):
+    PARA = "paragraph"  # #paragrap
+    HEAD = "heading"    # #heading
+    CODE = "code"       # #code
+    QUOT = "quote"      # #quote
+    UNOR = "unordered"  # #unordered_list
+    ORDE = "ordered"    # #ordered_list
+    NORM = "normal"
+
+class block:
+    def __init__(self, blocktext, block_type = None):
+        self.blocktext = blocktext
+        self.block_type = block_type
+
+def block_to_block_type(md_block):
+    md = block(md_block)
+    #md.block_type == BlockType.NORM
+    if md is not None:
+        md.block_type = BlockType.NORM
+    return md.block_type
