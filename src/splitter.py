@@ -1,5 +1,5 @@
 from textnode import TextType, TextNode
-from regex import extract_markdown_images, extract_markdown_links
+from regex import extract_markdown_images, extract_markdown_links, match_block_headings
 import re
 from enum import Enum
 
@@ -105,6 +105,16 @@ class block:
 def block_to_block_type(md_block):
     md = block(md_block)
     #md.block_type == BlockType.NORM
+    #if  match_block_headings(md.blocktext):
+        #return BlockType.HEAD
     if md is not None:
         md.block_type = BlockType.NORM
     return md.block_type
+
+ 
+# Headings start with 1-6 # characters, followed by a space and then the heading text.
+# Multiline Code blocks must start with 3 backticks and a newline, then end with 3 backticks.
+# Every line in a quote block must start with a "greater-than" character: > followed by the quote text. A space after > is allowed but not required.
+# Every line in an unordered list block must start with a - character, followed by a space.
+# Every line in an ordered list block must start with a number followed by a . character and a space. The number must start at 1 and increment by 1 for each line.
+# If none of the above conditions are met, the block is a normal paragraph.

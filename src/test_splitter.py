@@ -1,5 +1,5 @@
 import unittest
-from splitter import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes, markdown_to_blocks, block_to_block_type
+from splitter import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes, markdown_to_blocks, block_to_block_type, BlockType, block
 from textnode import TextNode, TextType, text_node_to_html_node
 
 class TestDelimiter(unittest.TestCase):
@@ -555,4 +555,9 @@ class TestBlockSplitter(unittest.TestCase):
     def test_block_splitter_basic(self):
         block = "block of text"
         result = block_to_block_type(block)
-        self.assertEqual(result, "BlockType.NORM")
+        self.assertEqual(result, BlockType.NORM)
+
+    def donttest_block_h1_basic(self):
+        block = "# h1 test block"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
