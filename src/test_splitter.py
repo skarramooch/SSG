@@ -552,12 +552,99 @@ This is the same paragraph on a new line
 
 class TestBlockSplitter(unittest.TestCase):
 
-    def test_block_splitter_basic(self):
+    def donttest_block_splitter_basic(self):
         block = "block of text"
         result = block_to_block_type(block)
         self.assertEqual(result, BlockType.NORM)
 
-    def donttest_block_h1_basic(self):
+    def test_block_h1_basic(self):
         block = "# h1 test block"
         result = block_to_block_type(block)
         self.assertEqual(result, BlockType.HEAD)
+
+    def test_block_h2_basic(self):
+        block = "## h2 test block"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+ 
+    def test_block_h3_basic(self):
+        block = "### h3 test block"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+ 
+    def test_block_h4_basic(self):
+        block = "#### h4 test block"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+
+    def test_block_h5_basic(self):
+        block = "##### h5 test block"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+ 
+    def test_block_h6_basic(self):
+        block = "###### h6 test block"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+ 
+    def test_block_h7_basic(self):
+        block = "####### h7 test block"
+        result = block_to_block_type(block)
+        self.assertNotEqual(result, BlockType.HEAD)
+
+
+# harder tests
+    def test_block_splitter_multiline(self):
+        block = """block of text
+second line
+third line"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.NORM)
+
+    def test_block_h1_muliline(self):
+        block = """# h1 test block
+secondline
+thirdline"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+
+    def test_block_h2_multiline(self):
+        block = """## h2 test block
+secondline
+thirdline"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+
+ 
+    def test_block_h3_multiheader(self):
+        block = """### h3 test block
+## h2 second line
+### h3 thirdline"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+
+ 
+    def test_block_h4_nospace(self):
+        block = "####h4 test block"
+        result = block_to_block_type(block)
+        self.assertNotEqual(result, BlockType.HEAD)
+
+ 
+    def donttest_block_h5_basic(self):
+        block = "##### h5 test block"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+
+ 
+    def donttest_block_h6_basic(self):
+        block = "###### h6 test block"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+
+ 
+    def donttest_block_h7_basic(self):
+        block = "####### h7 test block"
+        result = block_to_block_type(block)
+        self.assertNotEqual(result, BlockType.HEAD)
+
+

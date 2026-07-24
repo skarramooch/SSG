@@ -105,8 +105,8 @@ class block:
 def block_to_block_type(md_block):
     md = block(md_block)
     #md.block_type == BlockType.NORM
-    #if  match_block_headings(md.blocktext):
-        #return BlockType.HEAD
+    if  match_block_headings(md.blocktext):
+        return BlockType.HEAD
     if md is not None:
         md.block_type = BlockType.NORM
     return md.block_type
