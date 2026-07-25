@@ -1,5 +1,7 @@
 from textnode import TextType, TextNode
-from regex import extract_markdown_images, extract_markdown_links
+from regex import extract_markdown_images, extract_markdown_links, match_block_headings
+import re
+from enum import Enum
 
 def split_nodes_delimiter(old_nodes, delimiter, text_type):
     bracket_queue = []
@@ -76,10 +78,64 @@ def text_to_textnodes(text):
 
 def markdown_to_blocks(md):
     blocks = []
-    newline_split_md = md.strip().split("\n\n")
-    for block in newline_split_md:
+    splitted = md.split("\n\n")
+    stripped = []
+    for block in splitted:
+        stripped.append(block.strip())
+    for block in stripped:
         if block != '':
             blocks.append(block)
     return blocks
 
 
+class BlockType(Enum):
+    PARA = "paragraph"  # #paragrap
+    HEAD = "heading"    # #heading
+    CODE = "code"       # #code
+    QUOT = "quote"      # #quote
+    UNOR = "unordered"  # #unordered_list
+    ORDE = "ordered"    # #ordered_list
+    NORM = "normal"
+
+class block:
+    def __init__(self, blocktext, block_type = None):
+        self.blocktext = blocktext
+        self.block_type = block_type
+
+def block_to_block_type(md_block):
+    md = block(md_block)
+    #md.block_type == BlockType.NORM
+    if  match_block_headings(md.blocktext):
+        return BlockType.HEAD
+    if md.blocktext.startswith("```") and md.blocktext.endswith("```"):
+        return BlockType.CODE
+    md_split = md.blocktext.split("\n")
+    QUOTESUM = 0
+    UNORDEREDSUM = 0
+    ORDERSUM = 0
+    for line in md_split:
+        if line.startswith(">"):
+            QUOTESUM += 1
+        if line.startswith ("- "):
+            UNORDEREDSUM += 1
+    if QUOTESUM == len(md_split):
+        return BlockType.QUOT
+    if UNORDEREDSUM == len(md_split):
+        return BlockType.UNOR
+    for n in range(1, len(md_split) + 1):
+        if md_split[n-1].startswith(f"{str(n)}. "):
+            ORDERSUM += 1
+    if ORDERSUM == len(md_split):
+        return BlockType.ORDE
+
+    if md is not None:
+        md.block_type = BlockType.NORM
+    return md.block_type
+
+ 
+# Headings start with 1-6 # characters, followed by a space and then the heading text.
+# Multiline Code blocks must start with 3 backticks and a newline, then end with 3 backticks.
+# Every line in a quote block must start with a "greater-than" character: > followed by the quote text. A space after > is allowed but not required.
+# Every line in an unordered list block must start with a - character, followed by a space.
+# Every line in an ordered list block must start with a number followed by a . character and a space. The number must start at 1 and increment by 1 for each line.
+# If none of the above conditions are met, the block is a normal paragraph.

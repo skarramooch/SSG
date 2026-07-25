@@ -1,5 +1,5 @@
 import unittest
-from splitter import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes, markdown_to_blocks
+from splitter import split_nodes_delimiter, split_nodes_image, split_nodes_link, text_to_textnodes, markdown_to_blocks, block_to_block_type, BlockType, block
 from textnode import TextNode, TextType, text_node_to_html_node
 
 class TestDelimiter(unittest.TestCase):
@@ -407,7 +407,7 @@ class Testtotextnodes(unittest.TestCase):
 
  
 class TestBlocks(unittest.TestCase):
-    def test_markdown_to_blocks(self):
+    def test_markdown_to_blocks_boots(self):
         md = """
 This is **bolded** paragraph
 
@@ -426,3 +426,389 @@ This is the same paragraph on a new line
                 "- This is a list\n- with items",
             ],
         )
+
+
+    def test_markdown_to_blocks_doubles(self):
+        md = """
+This is **bolded** paragraph
+
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+
+- This is a list
+- with items
+
+
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
+
+
+    def test_markdown_to_blocks_triples(self):
+        md = """
+This is **bolded** paragraph
+
+
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+
+
+- This is a list
+- with items
+
+
+
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
+
+
+    def test_markdown_to_blocks_doubles_with_whitespace(self):
+        md = """
+This is **bolded** paragraph
+
+
+ 
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+ 
+- This is a list
+- with items
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
+
+
+    def test_markdown_to_blocks_start_and_end(self):
+        md = """
+
+This is **bolded** paragraph
+
+This is another paragraph with _italic_ text and `code` here
+This is the same paragraph on a new line
+
+- This is a list
+- with items
+
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(
+            blocks,
+            [
+                "This is **bolded** paragraph",
+                "This is another paragraph with _italic_ text and `code` here\nThis is the same paragraph on a new line",
+                "- This is a list\n- with items",
+            ],
+        )
+
+
+    def test_markdown_to_blocks_all_newline_no_text(self):
+        md = """
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(blocks, [],)
+
+class TestBlockSplitter(unittest.TestCase):
+
+    def test_block_splitter_basic(self):
+        block = "block of text"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.NORM)
+
+    def test_block_h1_basic(self):
+        block = "# h1 test block"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+
+    def test_block_h2_basic(self):
+        block = "## h2 test block"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+ 
+    def test_block_h3_basic(self):
+        block = "### h3 test block"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+ 
+    def test_block_h4_basic(self):
+        block = "#### h4 test block"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+
+    def test_block_h5_basic(self):
+        block = "##### h5 test block"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+ 
+    def test_block_h6_basic(self):
+        block = "###### h6 test block"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+ 
+    def test_block_h7_basic(self):
+        block = "####### h7 test block"
+        result = block_to_block_type(block)
+        self.assertNotEqual(result, BlockType.HEAD)
+
+
+# harder tests
+    def test_block_splitter_multiline(self):
+        block = """block of text
+second line
+third line"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.NORM)
+
+    def test_block_h1_muliline(self):
+        block = """# h1 test block
+secondline
+thirdline"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+
+    def test_block_h2_multiline(self):
+        block = """## h2 test block
+secondline
+thirdline"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+
+ 
+    def test_block_h3_multiheader(self):
+        block = """### h3 test block
+## h2 second line
+### h3 thirdline"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+
+ 
+    def test_block_h4_nospace(self):
+        block = "####h4 test block"
+        result = block_to_block_type(block)
+        self.assertNotEqual(result, BlockType.HEAD)
+
+ 
+    def test_block_h5_no_gap(self):
+        block = "#####h5 test block"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.NORM)
+
+ 
+    def test_block_h6_multi_h(self):
+        block = """###### h6 test block
+###### h6 another line"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+
+ 
+    def test_block_h7_complex(self):
+        block = """#######1. h7 test block
+###### 2. six hashes
+##### 5 hashes"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.NORM)
+
+# codebock tests
+    def test_block_splitter_code(self):
+        block = "```block of text```"
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.CODE)
+
+    def test_block_splitter_code_block(self):
+        block = """```block of text
+pretending this is all text here now
+for multiple lines
+like this```"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.CODE)
+
+    def test_block_splitter_not_code(self):
+        block = "block of text```"
+        result = block_to_block_type(block)
+        self.assertNotEqual(result, BlockType.CODE)
+
+    def test_block_splitter_code_not(self):
+        block = "```block of text"
+        result = block_to_block_type(block)
+        self.assertNotEqual(result, BlockType.CODE)
+
+    def test_block_splitter_invalid_code(self):
+        block = "``block of text```"
+        result = block_to_block_type(block)
+        self.assertNotEqual(result, BlockType.CODE)
+
+# quote tests
+    def test_block_splitter_quote_basic(self):
+        block = """> quote first line
+> quote second line of text
+>quote third line of text"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.QUOT)
+
+    def test_block_splitter_quote_missing(self):
+        block = """> quote first line
+quote second line of text
+>quote third line of text"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.NORM)
+
+    def test_block_splitter_quote_double(self):
+        block = """>> quote first line
+>>> quote second line of text
+>>>>quote third line of text"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.QUOT)
+
+    def test_block_splitter_quote_midline(self):
+        block = """quote > mid line
+>>> quote second line of text
+>>>>quote third line of text"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.NORM)
+
+
+ 
+ 
+# unordered list tests
+    def test_block_splitter_unordered_basic(self):
+        block = """- block of text
+- second line
+- 3rd line"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.UNOR)
+
+    def test_block_splitter_unordered_missing(self):
+        block = """- block of text
+second line
+- 3rd line"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.NORM)
+
+    def test_block_splitter_unordered_double(self):
+        block = """-- block of text
+---- second line
+---------- 3rd line"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.NORM)
+
+
+
+ 
+# ordered list tests
+    def test_block_splitter_ordered_basic(self):
+        block = """1. block of text
+2. second line
+3. 3rd line"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.ORDE)
+
+    def test_block_splitter_ordered_single(self):
+        block = """1. just one line"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.ORDE)
+
+
+    def test_block_splitter_ordered_mising(self):
+        block = """1. block of text
+second line
+3. 3rd line"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.NORM)
+
+    def test_block_splitter_ordered_unordered(self):
+        block = """1. block of text
+3. second line
+2. 3rd line"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.NORM)
+
+ 
+    def test_block_splitter_ordered_no_dots(self):
+        block = """1 block of text
+2 second line
+3 3rd line
+4 foruth
+5 fifth"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.NORM)
+
+ 
+# edge cases
+    def test_block_splitter_single_whitespace(self):
+        block = """ """
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.NORM)
+
+    def test_block_splitter_multiple_whitespaces(self):
+        block = """        """
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.NORM)
+
+    def test_block_splitter_multiple_line_whitespaces(self):
+        block = """
+ 
+   """
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.NORM)
+
+    def test_block_splitter_code_notext(self):
+        block = """``````"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.CODE)
+
+    def test_block_splitter_ordered_start_two(self):
+        block = """2. block of text
+3. second line
+4. 3rd line"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.NORM)
+
+    def test_block_splitter_mixed_blocktypes(self):
+        block = """# header mixed with 
+- unordered"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.HEAD)
+
+ 
