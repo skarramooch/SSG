@@ -10,7 +10,6 @@ def extract_markdown_links(text):
 
 def match_block_headings(block):
     matches = re.findall(r"(^\#{1,6} (\w))", block)
-    print(f"[block headings match in progress] {matches}")
     if matches:
         return True
 

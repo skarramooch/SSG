@@ -107,6 +107,27 @@ def block_to_block_type(md_block):
     #md.block_type == BlockType.NORM
     if  match_block_headings(md.blocktext):
         return BlockType.HEAD
+    if md.blocktext.startswith("```") and md.blocktext.endswith("```"):
+        return BlockType.CODE
+    md_split = md.blocktext.split("\n")
+    QUOTESUM = 0
+    UNORDEREDSUM = 0
+    ORDERSUM = 0
+    for line in md_split:
+        if line.startswith(">"):
+            QUOTESUM += 1
+        if line.startswith ("- "):
+            UNORDEREDSUM += 1
+    if QUOTESUM == len(md_split):
+        return BlockType.QUOT
+    if UNORDEREDSUM == len(md_split):
+        return BlockType.UNOR
+    for n in range(1, len(md_split) + 1):
+        if md_split[n-1].startswith(f"{str(n)}. "):
+            ORDERSUM += 1
+    if ORDERSUM == len(md_split):
+        return BlockType.ORDE
+
     if md is not None:
         md.block_type = BlockType.NORM
     return md.block_type
