@@ -1,4 +1,4 @@
-from splitter import markdown_to_blocks, block_to_block_type, BlockType, block
+#from splitter import markdown_to_blocks, block_to_block_type, BlockType, block
 
 class HTMLNode:
     def __init__(self, tag=None, value=None, children=None, props=None):
@@ -72,16 +72,4 @@ class ParentNode(HTMLNode):
         result = f'<{self.tag}>{child_part}</{self.tag}>'
         return result
 
-def markdown_to_html_node(markdown):
-    #split to blocks
-    blocks = markdown_to_blocks(markdown)
-    #loop over each block
-    for block in blocks:
-        print(f"[markdown to html node] block: {block}")
-        #determine block type
-        blocktype = block_to_block_type(block)
-        #create appropriate htmlnode
-        #assign appropriate child nodes
-        #be carefull and do something different with code nodes
-    #make all block nodes childeren of the single DIV parent html node
     #return that sucka and watch the peacock fly
