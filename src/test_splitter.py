@@ -555,7 +555,7 @@ class TestBlockSplitter(unittest.TestCase):
     def test_block_splitter_basic(self):
         block = "block of text"
         result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.NORM)
+        self.assertEqual(result, BlockType.PARA)
 
     def test_block_h1_basic(self):
         block = "# h1 test block"
@@ -599,7 +599,7 @@ class TestBlockSplitter(unittest.TestCase):
 second line
 third line"""
         result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.NORM)
+        self.assertEqual(result, BlockType.PARA)
 
     def test_block_h1_muliline(self):
         block = """# h1 test block
@@ -633,7 +633,7 @@ thirdline"""
     def test_block_h5_no_gap(self):
         block = "#####h5 test block"
         result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.NORM)
+        self.assertEqual(result, BlockType.PARA)
 
  
     def test_block_h6_multi_h(self):
@@ -648,7 +648,7 @@ thirdline"""
 ###### 2. six hashes
 ##### 5 hashes"""
         result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.NORM)
+        self.assertEqual(result, BlockType.PARA)
 
 # codebock tests
     def test_block_splitter_code(self):
@@ -692,7 +692,7 @@ like this```"""
 quote second line of text
 >quote third line of text"""
         result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.NORM)
+        self.assertEqual(result, BlockType.PARA)
 
     def test_block_splitter_quote_double(self):
         block = """>> quote first line
@@ -706,7 +706,7 @@ quote second line of text
 >>> quote second line of text
 >>>>quote third line of text"""
         result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.NORM)
+        self.assertEqual(result, BlockType.PARA)
 
 
  
@@ -724,14 +724,14 @@ quote second line of text
 second line
 - 3rd line"""
         result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.NORM)
+        self.assertEqual(result, BlockType.PARA)
 
     def test_block_splitter_unordered_double(self):
         block = """-- block of text
 ---- second line
 ---------- 3rd line"""
         result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.NORM)
+        self.assertEqual(result, BlockType.PARA)
 
 
 
@@ -755,14 +755,14 @@ second line
 second line
 3. 3rd line"""
         result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.NORM)
+        self.assertEqual(result, BlockType.PARA)
 
     def test_block_splitter_ordered_unordered(self):
         block = """1. block of text
 3. second line
 2. 3rd line"""
         result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.NORM)
+        self.assertEqual(result, BlockType.PARA)
 
  
     def test_block_splitter_ordered_no_dots(self):
@@ -772,26 +772,26 @@ second line
 4 foruth
 5 fifth"""
         result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.NORM)
+        self.assertEqual(result, BlockType.PARA)
 
  
 # edge cases
     def test_block_splitter_single_whitespace(self):
         block = """ """
         result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.NORM)
+        self.assertEqual(result, BlockType.PARA)
 
     def test_block_splitter_multiple_whitespaces(self):
         block = """        """
         result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.NORM)
+        self.assertEqual(result, BlockType.PARA)
 
     def test_block_splitter_multiple_line_whitespaces(self):
         block = """
  
    """
         result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.NORM)
+        self.assertEqual(result, BlockType.PARA)
 
     def test_block_splitter_code_notext(self):
         block = """``````"""
@@ -803,7 +803,7 @@ second line
 3. second line
 4. 3rd line"""
         result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.NORM)
+        self.assertEqual(result, BlockType.PARA)
 
     def test_block_splitter_mixed_blocktypes(self):
         block = """# header mixed with 

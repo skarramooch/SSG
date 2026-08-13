@@ -95,7 +95,7 @@ class BlockType(Enum):
     QUOT = "quote"      # #quote
     UNOR = "unordered"  # #unordered_list
     ORDE = "ordered"    # #ordered_list
-    NORM = "normal"
+    #NORM = "normal"
 
 class block:
     def __init__(self, blocktext, block_type = None):
@@ -129,7 +129,7 @@ def block_to_block_type(md_block):
         return BlockType.ORDE
 
     if md is not None:
-        md.block_type = BlockType.NORM
+        md.block_type = BlockType.PARA
     return md.block_type
 
  

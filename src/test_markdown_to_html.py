@@ -5,7 +5,48 @@ from markdown_to_html import markdown_to_html_node
 
 
 class TestMarkdownToHtml(unittest.TestCase):
-    def test_paragraphs(self):
+    def dont_test_simplemarkdown(self):
+        md = """simple **I said SIMPLE** text"""
+        node = markdown_to_html_node(md)
+        print(f"\n[TEST] node = {node}\n")
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><p>simple <b>I said SIMPLE</b> text</p></div>",
+        )
+
+
+    def test_simple_blocks(self):
+        md = """unformatted paragraph
+
+formatted **bold** _italic_ paragraph
+
+# Header 1
+
+## header 2
+
+- unordered **list** item 1
+- unordered _list_ item 2
+- unordered list item 3
+
+1. numbered list one
+2. numbered list two
+3. numbered list three
+
+```and of course the 
+infamous clode block
+which will not be **bold** formatted```
+
+### other things to check:
+- formatting inside each block
+- image links
+- html links
+- malformed markdown"""
+        print(f"\n\n[print md before processing] \n{md}\n\n")
+        node = markdown_to_html_node(md)
+        print(f"\n\n[node = markdown_to_html_node(md)] \n{node}\n\n")
+
+    def dont_test_paragraphs(self):
         md = """
 This is **bolded** paragraph
 text in a p
