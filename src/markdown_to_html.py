@@ -7,6 +7,7 @@
 
 from splitter import markdown_to_blocks, block_to_block_type, block, text_to_textnodes, BlockType
 from htmlnode import HTMLNode, ParentNode, LeafNode
+from textnode import text_node_to_html_node
 
 def markdown_to_html_node(whole_markdown_doc):
     md_blocks = markdown_to_blocks(whole_markdown_doc) #splits whole_md_doc into block chunks
@@ -26,9 +27,7 @@ def block_html_wrapper(md_Block):
     
     if md_Block.block_type == BlockType.PARA:
         block_children = text_to_children(md_Block.blocktext)
-        if block_children:
-            return ParentNode("p", children=block_children)
-        return LeafNode("p", md_Block.blocktext)
+        return ParentNode("p", children=block_children)
 
     if md_Block.block_type == BlockType.HEAD:
         #print(f"[text_to_children] blocktype = HEAD")
@@ -41,13 +40,11 @@ def block_html_wrapper(md_Block):
     if md_Block.block_type == BlockType.UNOR:
         children = md_Block.blocktext.split("- ")
         html_block = ParentNode("ul", children)
-        #for child in children:
-        #    html_block += "<li>" + child + "</li>"
-        #html_block += "</ul>"
         return html_block
 
     if md_Block.block_type == BlockType.ORDE:
-        print(f"[text_to_children] blocktype = ORDE \n<ol>\n  <li>  </li>\n  <li>   </li>\n</ol>")
+        children = md_Block.blocktext.split(".") ##this isnt right, i think we need regex
+        html_block = ParentNode("ol", children)
         return
         
     else:
@@ -66,5 +63,11 @@ def text_to_children(text):
     # feed in lines of text which will be processed inline
     # p doesnt need it but it can come through
     # ul, ol, h1-6 can all come in here
+    textnodes = text_to_textnodes(text)
+    html_children = []
+    for textnode in textnodes:
+        html_child = text_node_to_html_node(textnode)
+        html_children.append(html_child)
+    return html_children
+
     
-    return "standard child text"
