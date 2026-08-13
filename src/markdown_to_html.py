@@ -33,7 +33,16 @@ def block_html_wrapper(md_Block):
         return
 
     if md_Block.block_type == BlockType.QUOT:
-        return
+        block_lines = md_Block.blocktext.splitlines()
+        quote_lines = "" 
+        for line in block_lines:
+            stripped_quote_line = line[1:].strip()
+            quote_lines += stripped_quote_line + " "
+        quotepara = quote_lines.strip()
+        quotetext = text_to_children(quotepara)
+        html_block = ParentNode("blockquote", quotetext)
+        return html_block
+
 
     if md_Block.block_type == BlockType.UNOR:
         block_lines = md_Block.blocktext.splitlines()
@@ -65,7 +74,7 @@ def block_html_wrapper(md_Block):
 
 def codeblock_to_leafnode(md_Block):
     code_leaf_text = md_Block.blocktext[3:-3]
-    return LeafNode("blockquote", code_leaf_text)
+    return ParentNode("pre", LeafNode("code", code_leaf_text))
 
 def text_to_children(text):
     # feed in lines of text which will be processed inline

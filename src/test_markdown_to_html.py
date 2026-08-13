@@ -37,6 +37,11 @@ formatted **bold** _italic_ paragraph
 infamous clode block
 which will not be **bold** formatted```
 
+> quote blocks are a bit different,
+>they may or may not have a 
+> space after the first character, so should be _treated_ **as
+>one** block of text
+
 ### other things to check:
 - formatting inside each block
 - image links
