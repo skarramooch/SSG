@@ -15,37 +15,45 @@ def markdown_to_html_node(whole_markdown_doc):
         md_Block = block(md_block)
         md_Block.block_type = block_to_block_type(md_block)
         md_Block_html = block_html_wrapper(md_Block)
-        print(f"[md_Block_html] {md_Block_html}")
+        print(f"[md_Block_html] {md_Block_html}\n\n")
 
 
 
 
 def block_html_wrapper(md_Block):
-    if md_Block.block_type == BlockType.CODE:
+    if md_Block.block_type == BlockType.CODE: ## DONE
         #send to special processor
         return codeblock_to_leafnode(md_Block)
     
-    if md_Block.block_type == BlockType.PARA:
+    if md_Block.block_type == BlockType.PARA: ## DONE
         block_children = text_to_children(md_Block.blocktext)
         return ParentNode("p", children=block_children)
 
     if md_Block.block_type == BlockType.HEAD:
-        #print(f"[text_to_children] blocktype = HEAD")
         return
 
     if md_Block.block_type == BlockType.QUOT:
-        #print(f"[text_to_children] blocktype = QUOT")
         return
 
     if md_Block.block_type == BlockType.UNOR:
-        children = md_Block.blocktext.split("- ")
-        html_block = ParentNode("ul", children)
+        block_lines = md_Block.blocktext.splitlines()
+        html_lines = []
+        for line in block_lines:
+            html_line = text_to_children(line[2:])
+            html_lines.append(ParentNode("li", html_line))
+        html_block = ParentNode("ul", html_lines)
         return html_block
 
     if md_Block.block_type == BlockType.ORDE:
-        children = md_Block.blocktext.split(".") ##this isnt right, i think we need regex
-        html_block = ParentNode("ol", children)
-        return
+        block_lines = md_Block.blocktext.splitlines()
+        html_lines = []
+        for prefixed_line in block_lines:
+            line = prefixed_line.split(". ", 1)
+            html_line = text_to_children(line[1])
+            html_lines.append(ParentNode("li", html_line))
+        html_block = ParentNode("ol", html_lines)
+        return html_block
+
         
     else:
         print(f"\n[AAARGH] {md_Block.block_type} didnt work\n")
