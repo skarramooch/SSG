@@ -41,9 +41,6 @@ class LeafNode(HTMLNode):
             raise ValueError
         if self.tag is None:
             return self.value
-        if self.props != None:
-            print(f"[DEBUG][child] tracing child {self}")
-            print(f"[DEBUG][child] tracing child.props = {self.props}")
         return f'<{self.tag}{self.props_to_html()}>{self.value}</{self.tag}>'
 
 
@@ -71,9 +68,6 @@ class ParentNode(HTMLNode):
             raise ValueError("you didn't supply any children")
         child_part = ""
         for child in self.children:
-            if child.props != None:
-                print(f"[DEBUG][parent] problem found in child {child}")
-                print(f"[DEBUG][parent] child.props = {child.props}")
             child_part += child.to_html()
         result = f'<{self.tag}>{child_part}</{self.tag}>'
         return result

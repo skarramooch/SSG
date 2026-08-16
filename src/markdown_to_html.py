@@ -87,7 +87,7 @@ def block_html_wrapper(md_Block):
 
 
 def codeblock_to_leafnode(md_Block):
-    code_leaf_text = md_Block.blocktext[3:-3]
+    code_leaf_text = md_Block.blocktext[3:-3].lstrip("\n")
     code_leaf_text_node = TextNode(code_leaf_text, TextType.CODE)
     code_leaf_html_node = text_node_to_html_node(code_leaf_text_node)
     return ParentNode("pre", [code_leaf_html_node])
