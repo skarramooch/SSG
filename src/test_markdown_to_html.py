@@ -5,7 +5,7 @@ from markdown_to_html import markdown_to_html_node
 
 
 class TestMarkdownToHtml(unittest.TestCase):
-    def dont_test_simplemarkdown(self):
+    def test_simplemarkdown(self):
         md = """simple **I said SIMPLE** text"""
         node = markdown_to_html_node(md)
         print(f"\n[TEST] node = {node}\n")
@@ -16,7 +16,7 @@ class TestMarkdownToHtml(unittest.TestCase):
         )
 
 
-    def dont_test_simple_block(self):
+    def test_simple_block(self):
         md = """unformatted paragraph
 
 formatted **bold** _italic_ paragraph
@@ -56,9 +56,7 @@ which will not be **bold** formatted```
 ###### 6 header
 
 ####### 7 header"""
-        # print(f"\n\n[print md before processing] \n{md}\n\n")
         node = markdown_to_html_node(md)
-        # print(f"\n\n[node = markdown_to_html_node(md)] \n{node}\n\n")
 
     def test_paragraphs(self):
         md = """
@@ -78,17 +76,17 @@ This is another paragraph with _italic_ text and `code` here
         )
 
 
-def dont_test_codeblock(self):
-    md = """
+    def test_codeblock(self):
+        md = """
 ```
 This is text that _should_ remain
 the **same** even with inline stuff
 ```
 """
 
-    node = markdown_to_html_node(md)
-    html = node.to_html()
-    self.assertEqual(
-        html,
-        "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
-    )
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
+        )

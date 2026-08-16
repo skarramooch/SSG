@@ -30,11 +30,13 @@ def block_html_wrapper(md_Block):
         #send to special processor
         return codeblock_to_leafnode(md_Block)
     
-    if md_Block.block_type == BlockType.PARA: ## DONE
+    if md_Block.block_type == BlockType.PARA: ## DONE ##corrected inline breaks
+        un_line_broken = md_Block.blocktext.replace("\n", " ") # swap newlines for spaces
+        md_Block.blocktext = un_line_broken # reassign for cleanliness
         block_children = text_to_children(md_Block.blocktext)
         return ParentNode("p", children=block_children)
 
-    if md_Block.block_type == BlockType.HEAD:
+    if md_Block.block_type == BlockType.HEAD: ## DONE
         block_line = md_Block.blocktext
         level = 0
         for i in range(0,6):
