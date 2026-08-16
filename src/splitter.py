@@ -84,12 +84,18 @@ def markdown_to_blocks(md):
         stripped.append(block.strip())
     for block in stripped:
         if block != '':
-            blocks.append(block)
+            if block[0] == "#":
+                # print(f"[MD 2 blcks] [HEADER BLCOK FOUND] in block: \n\n***\n{block}\n***\n\n")
+                header_split_blocks = block.split("\n", 1)
+                for hs_block in header_split_blocks:
+                    blocks.append(hs_block)
+            else:
+                blocks.append(block)
     return blocks
 
 
 class BlockType(Enum):
-    PARA = "paragraph"  # #paragrap
+    PARA = "paragraph"  # #paragraph
     HEAD = "heading"    # #heading
     CODE = "code"       # #code
     QUOT = "quote"      # #quote

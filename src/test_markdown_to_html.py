@@ -5,7 +5,7 @@ from markdown_to_html import markdown_to_html_node
 
 
 class TestMarkdownToHtml(unittest.TestCase):
-    def dont_test_simplemarkdown(self):
+    def test_simplemarkdown(self):
         md = """simple **I said SIMPLE** text"""
         node = markdown_to_html_node(md)
         print(f"\n[TEST] node = {node}\n")
@@ -16,7 +16,7 @@ class TestMarkdownToHtml(unittest.TestCase):
         )
 
 
-    def test_simple_blocks(self):
+    def test_simple_block(self):
         md = """unformatted paragraph
 
 formatted **bold** _italic_ paragraph
@@ -46,10 +46,19 @@ which will not be **bold** formatted```
 - formatting inside each block
 - image links
 - html links
-- malformed markdown"""
-        print(f"\n\n[print md before processing] \n{md}\n\n")
+- malformed markdown
+- bold in headers
+- more than 6 # headers
+- two header lines together
+
+##### 5 header
+
+###### 6 header
+
+####### 7 header"""
+        # print(f"\n\n[print md before processing] \n{md}\n\n")
         node = markdown_to_html_node(md)
-        print(f"\n\n[node = markdown_to_html_node(md)] \n{node}\n\n")
+        # print(f"\n\n[node = markdown_to_html_node(md)] \n{node}\n\n")
 
     def dont_test_paragraphs(self):
         md = """
@@ -69,7 +78,7 @@ This is another paragraph with _italic_ text and `code` here
         )
 
 
-def dont_test_codeblock(self):
+def test_codeblock(self):
     md = """
 ```
 This is text that _should_ remain

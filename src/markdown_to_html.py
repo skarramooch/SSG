@@ -7,15 +7,20 @@
 
 from splitter import markdown_to_blocks, block_to_block_type, block, text_to_textnodes, BlockType
 from htmlnode import HTMLNode, ParentNode, LeafNode
-from textnode import text_node_to_html_node
+from textnode import text_node_to_html_node, TextNode, TextType
 
 def markdown_to_html_node(whole_markdown_doc):
     md_blocks = markdown_to_blocks(whole_markdown_doc) #splits whole_md_doc into block chunks
+    htmlnode_blocks = []
     for md_block in md_blocks:
         md_Block = block(md_block)
         md_Block.block_type = block_to_block_type(md_block)
         md_Block_html = block_html_wrapper(md_Block)
-        print(f"[md_Block_html] {md_Block_html}\n\n")
+        # print(f"[md_Block_html] {md_Block_html}\n\n")
+        htmlnode_blocks.append(md_Block_html)
+    print(ParentNode("div", htmlnode_blocks))
+    return ParentNode("div", htmlnode_blocks)
+
 
 
 
@@ -30,9 +35,16 @@ def block_html_wrapper(md_Block):
         return ParentNode("p", children=block_children)
 
     if md_Block.block_type == BlockType.HEAD:
-        return
+        block_line = md_Block.blocktext
+        level = 0
+        for i in range(0,6):
+            if block_line[0] == "#":
+                level += 1
+                block_line = block_line[1:]
+        html_line = ParentNode(f"h{level}", text_to_children(block_line.strip()))
+        return html_line
 
-    if md_Block.block_type == BlockType.QUOT:
+    if md_Block.block_type == BlockType.QUOT: ## DONE
         block_lines = md_Block.blocktext.splitlines()
         quote_lines = "" 
         for line in block_lines:
@@ -44,7 +56,7 @@ def block_html_wrapper(md_Block):
         return html_block
 
 
-    if md_Block.block_type == BlockType.UNOR:
+    if md_Block.block_type == BlockType.UNOR: ## DONE
         block_lines = md_Block.blocktext.splitlines()
         html_lines = []
         for line in block_lines:
@@ -53,7 +65,7 @@ def block_html_wrapper(md_Block):
         html_block = ParentNode("ul", html_lines)
         return html_block
 
-    if md_Block.block_type == BlockType.ORDE:
+    if md_Block.block_type == BlockType.ORDE: ## DONE
         block_lines = md_Block.blocktext.splitlines()
         html_lines = []
         for prefixed_line in block_lines:
@@ -74,7 +86,9 @@ def block_html_wrapper(md_Block):
 
 def codeblock_to_leafnode(md_Block):
     code_leaf_text = md_Block.blocktext[3:-3]
-    return ParentNode("pre", LeafNode("code", code_leaf_text))
+    code_leaf_text_node = TextNode(code_leaf_text, TextType.CODE)
+    code_leaf_html_node = text_node_to_html_node(code_leaf_text_node)
+    return ParentNode("pre", [code_leaf_html_node])
 
 def text_to_children(text):
     # feed in lines of text which will be processed inline
