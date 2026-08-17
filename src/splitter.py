@@ -69,12 +69,12 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
 
 def text_to_textnodes(text):
     node = TextNode(text, TextType.TEXT)
-    result_bold = split_nodes_delimiter([node], "**", TextType.BOLD)
-    result_italic = split_nodes_delimiter(result_bold, "_", TextType.ITALIC)
-    result_code = split_nodes_delimiter(result_italic, "`", TextType.CODE)
-    result_image = split_nodes_image(result_code)
-    result_link = split_nodes_link(result_image)
-    return result_link
+    result_after_bold = split_nodes_delimiter([node], "**", TextType.BOLD)
+    result_after_italic = split_nodes_delimiter(result_after_bold, "_", TextType.ITALIC)
+    result_after_code = split_nodes_delimiter(result_after_italic, "`", TextType.CODE)
+    result_after_image = split_nodes_image(result_after_code)
+    result_after_link = split_nodes_link(result_after_image)
+    return result_after_link
 
 def markdown_to_blocks(md):
     blocks = []

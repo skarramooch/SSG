@@ -3,12 +3,10 @@ import unittest
 from markdown_to_html import markdown_to_html_node
 
 
-
 class TestMarkdownToHtml(unittest.TestCase):
     def test_simplemarkdown(self):
         md = """simple **I said SIMPLE** text"""
         node = markdown_to_html_node(md)
-        print(f"\n[TEST] node = {node}\n")
         html = node.to_html()
         self.assertEqual(
             html,
@@ -90,3 +88,51 @@ the **same** even with inline stuff
             html,
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
         )
+
+
+    def test_tabbed_numbered_codeblock(self):
+        md = """```
+# here's some comments
+##here's a couple more, I hope they
+###dont get trated as headers!!
+def dprint(*kargs, **kwargs):
+    if DPRINT:
+        print(*kargs, **kwargs)
+#drpint statement finished
+<h1>other ideas for testing</h1>
+1. numbered blocks (done)
+2. images
+3. links
+4. not separated paragraphs
+5. some non md files
+```"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            """<div><pre><code># here's some comments
+##here's a couple more, I hope they
+###dont get trated as headers!!
+def dprint(*kargs, **kwargs):
+    if DPRINT:
+        print(*kargs, **kwargs)
+#drpint statement finished
+<h1>other ideas for testing</h1>
+1. numbered blocks (done)
+2. images
+3. links
+4. not separated paragraphs
+5. some non md files\n</code></pre></div>""",
+        )
+
+
+#other ideas
+# paragraphs with other line breaks
+# paragraphs into unordered and numbered lists, code, 
+# paragraphs with pics
+# paragraphs with links
+# uo lists with pics
+# uo lists with links
+# ol lists with pics
+# ol lists with links

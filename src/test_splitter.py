@@ -811,4 +811,75 @@ second line
         result = block_to_block_type(block)
         self.assertEqual(result, BlockType.HEAD)
 
- 
+    def test_block_splitter_code_oneline(self):
+        block = """```CODEBLOCK```"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.CODE)
+
+    def test_block_splitter_code_two_lines(self):
+        block = """```CODEBLOCK
+        Line2```"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.CODE)
+
+    def test_block_splitter_code_two_lines_with_tab(self):
+        block = """```  CODEBLOCK
+            Line2```"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.CODE)
+
+    def test_block_splitter_code_two_lines(self):
+        block = """```CODEBLOCK
+        Line2```"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.CODE)
+
+
+    def test_block_splitter_code_two_lines_plus_empty_line(self):
+        block = """```CODEBLOCK
+
+Line2```"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.CODE)
+
+    def test_code_block_with_blank_line_stays_one_block(self):
+        md = """```
+line one
+
+line two
+```"""
+        blocks = markdown_to_blocks(md)
+        self.assertEqual(len(blocks), 1)
+
+
+
+
+#####
+
+    def dont_test_block_splitter_code_two_lines(self):
+        block = """```CODEBLOCK
+        Line2```"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.CODE)
+
+    def dont_test_block_splitter_code_two_lines(self):
+        block = """```CODEBLOCK
+        Line2```"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.CODE)
+
+    def dont_test_block_splitter_code_two_lines(self):
+        block = """```CODEBLOCK
+        Line2```"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.CODE)
+
+
+
+
+
+
+
+
+
+

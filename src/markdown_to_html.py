@@ -18,7 +18,6 @@ def markdown_to_html_node(whole_markdown_doc):
         md_Block_html = block_html_wrapper(md_Block)
         # print(f"[md_Block_html] {md_Block_html}\n\n")
         htmlnode_blocks.append(md_Block_html)
-    print(ParentNode("div", htmlnode_blocks))
     return ParentNode("div", htmlnode_blocks)
 
 
