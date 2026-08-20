@@ -76,7 +76,7 @@ def text_to_textnodes(text):
     result_after_link = split_nodes_link(result_after_image)
     return result_after_link
 
-def markdown_to_blocks(md):
+def old_markdown_to_blocks(md):
     blocks = []
     splitted = md.split("\n\n")
     stripped = []
@@ -92,6 +92,36 @@ def markdown_to_blocks(md):
             else:
                 blocks.append(block)
     return blocks
+
+def markdown_to_blocks(md):
+    md_lines = md.splitlines()
+    blocks = []
+    current_block = ""
+    NOSPLIT = False
+    for md_line in md_lines:
+        if md_line.startswith("```"):
+            NOSPLIT = not NOSPLIT
+            # print(f"[NOSPLIT toggled to] {NOSPLIT}")
+        if not NOSPLIT:
+            # print(f"[NOSPLIT off], md_line is {md_line}")
+            stripped_md_line = md_line.strip()
+            # print(f"[stripped_md_line] *{stripped_md_line}*")
+            if stripped_md_line != "":
+                # print(f"[stripped_md_line isnt nothing] *{stripped_md_line}*")
+                current_block = current_block + stripped_md_line + "\n"
+            else:
+                if current_block != "":
+                    # print(f"[appending current block] \n\n********\n{current_block}\n*****\n\n")
+                    blocks.append(current_block.strip())
+                    current_block = ""
+        else:
+            current_block = current_block + md_line + "\n"
+            print(f"[this should be the code block being built]\n{current_block}")
+    blocks.append(current_block.strip())
+    print(f"[returning list of blocks] \n\n&&&&&&&&&\n{blocks}\n&&&&&&&&&&\n\n")
+    return blocks
+
+
 
 
 class BlockType(Enum):

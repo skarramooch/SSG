@@ -1,0 +1,3 @@
+from src/markdown_to_html_node import markdown_to_blocks
+
+python3 -m unittest src.test_markdown_to_html.TestMarkdownToHtml.test_simple_block
