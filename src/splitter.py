@@ -135,72 +135,120 @@ def markdown_to_blocks(md):
     current_block = ""
     CODETEXT = False
     for md_line in md_lines:
+        # check current block type
+        line_type =  block_to_block_type(md_line)
         codefence_line = "```" in md_line
         codefence_closed = CODETEXT
+        print(f"\n[A] {len(blocks)}")
+        print(f"[A checks]\n[md_line]({md_line})\n[block_to_block_type(current_block]{block_to_block_type(current_block)}\n[block_to_block_type(md_line)]{block_to_block_type(md_line)}")
 
     ## codeblock handling
-    # coeblock start
+    # codeblock start
     # codeblock finish
     # codeblock add and flush
         if codefence_line and not codefence_closed:
 
+            print(f"[B] {len(blocks)}")
             # current line is start of codeblock
             # Check current_block is empty
             # toggle fenceclosed
             CODETEXT = not CODETEXT
             if current_block != "":
+
+                print(f"[C] {len(blocks)}")
                 # finish current block and start codeblock
                 blocks.append(current_block.strip())
                 current_block = md_line
             else:
+
+                print(f"[D] {len(blocks)}")
                 #just start new codeblock
                 current_block = md_line
-        if codefence_line and codefence_closed:
+
+        elif not codefence_line and codefence_closed:
+            current_block = current_block + "\n" + md_line
+        elif codefence_line and codefence_closed:
+
+            print(f"[D] {len(blocks)}")
             # finish codeblock
-            current_block += md_line
-            blocks.append(current_block.strip())
+            current_block = current_block + "\n" + md_line
+            blocks.append(current_block)
             current_block = ""
 
     ## noncodeblock handling
     # current_block empty line check
     # add line to current block
 
-        if current_block == "":
-            current_block = md_line.strip()
+        else:
+            if current_block == "":
+  
+                print(f"[E] {len(blocks)}    *line insert into empty current block")
+                print(f"[E] so current_block should be empty: ({current_block})")
+                current_block = md_line.strip()
+                print(f"[E] after insertion current_block: ({current_block})")
 
     # non empty line
-    # split on \n\n
-        if md_line == "\n\n":
-            blocks.append(current_block.strip())
-    # check current block type
-        line_type =  block_to_block_type(md_line)
-    # check line type
-    # if type is head make it a 1 line block!
-        if line_type == "HEAD":
-            blocks.append(current_block.strip())
-            current_block = md_line
+    # split on \n\n SHOULD THIS BE JUST \n????
+            else:
+                if md_line == "":
+                    print(f"[F] {len(blocks)}     * empty line - add and clear current block")
+                    blocks.append(current_block.strip())
+                    current_block = ""
+                    print(f"[G] {len(blocks)}")
+                # check line type
+                # if type is head make it a 1 line block!
+                if line_type == BlockType.HEAD:
+                    print(f"[H][HEAD] {len(blocks)}")
+                    current_block = current_block + md_line.strip() + "\n"
+                    blocks.append(current_block)
+                    current_block = md_line
+                    print(f"[I][HEAD] {len(blocks)}")
+ 
+# ?  if same
+                if block_to_block_type(current_block) == block_to_block_type(md_line):
+                    print(f"[block types are the same] {block_to_block_type(current_block)} == {block_to_block_type(md_line)}")
 
-    # ?  if same
-        if block_to_block_type(current_block) == block_to_block_type(md_line):
-            #shoudl i do different building for each block type? I think so!
-            # i think everything other than head is ok to match and continue block
-            # add line to current block
-                current_block = current_block + md_line.strip()
+                # check line type
+                # if type is head make it a 1 line block!
+                    if line_type == BlockType.HEAD:
+                        print(f"[H][HEAD] {len(blocks)}")
+                        current_block = current_block + md_line.strip() + "\n"
+                        blocks.append(current_block)
+                        current_block = md_line
+                        print(f"[I][HEAD] {len(blocks)}")
+                    if line_type == BlockType.PARA:
+                        print(f"[H][PARA] {len(blocks)}")
+                        current_block = current_block + "\n" + md_line.strip()
+                        print(f"[I][PARA] {len(blocks)}")
+                    else:
+                        print(f"[H][all the rest] {len(blocks)}")
+                        #blocks.append(current_block)
+                        current_block = current_block + "\n" + md_line.strip()
+                        #current_block = md_line
+                        print(f"[I][all the rest] {len(blocks)}")
+
+                        print(f"[J] {len(blocks)}")
+                        #current_block = current_block + md_line.strip()
 
     # ? if different
-        if block_to_block_type(current_block) != block_to_block_type(md_line):
-            # else:
-            # finish current block, 
-            # add line to new block
-            blocks.append(current_block.strip())
-            current_block = md_line
-
-    print(f"[complete blocks] {blocks}")
+                if block_to_block_type(current_block) != block_to_block_type(md_line):
+                    print(f"[K] {len(blocks)}")
+                # else:
+                # finish current block, 
+                # add line to new block
+                    blocks.append(current_block.strip())
+                    current_block = md_line
+                    print(f"[L] {len(blocks)}")
+    print(f"\n[M] is anything left in current_block? \ncurrent_block: \n{current_block}\n")
+    blocks.append(current_block.strip())
+    print(f"[complete blocks] {blocks}\n")
 
     # clean blocks
     for block in blocks:
         if block != "":
             final_blocks.append(block)
+
+    print(f"[cleaned blocks] {final_blocks}\n")
     return final_blocks
 
 
