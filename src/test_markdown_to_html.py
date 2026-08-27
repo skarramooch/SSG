@@ -107,11 +107,8 @@ def dprint(*kargs, **kwargs):
 5. some non md files
 ```"""
 
-        node = markdown_to_html_node(md)
-        html = node.to_html()
-        self.assertEqual(
-            html,
-            """<div><pre><code># here's some comments
+
+        expected = """<div><pre><code># here's some comments
 ##here's a couple more, I hope they
 ###dont get trated as headers!!
 def dprint(*kargs, **kwargs):
@@ -123,8 +120,13 @@ def dprint(*kargs, **kwargs):
 2. images
 3. links
 4. not separated paragraphs
-5. some non md files\n</code></pre></div>""",
-        )
+5. some non md files\n</code></pre></div>"""
+
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
+        self.assertEqual(html, expected)
 
 
 #other ideas

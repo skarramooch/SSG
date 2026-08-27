@@ -93,33 +93,116 @@ def old_markdown_to_blocks(md):
                 blocks.append(block)
     return blocks
 
-def markdown_to_blocks(md):
+def oldtwo_markdown_to_blocks(md):
     md_lines = md.splitlines()
     blocks = []
     current_block = ""
     NOSPLIT = False
     for md_line in md_lines:
-        if md_line.startswith("```"):
+        is_fence_line = "```" in md_line
+        print(f"A[is_fence_line]     {is_fence_line}, {md_line}")
+        was_in_code_block = NOSPLIT
+        print(f"B[was_in_code_block] {was_in_code_block}, {md_line}\n")
+        if is_fence_line:
             NOSPLIT = not NOSPLIT
-            # print(f"[NOSPLIT toggled to] {NOSPLIT}")
-        if not NOSPLIT:
-            # print(f"[NOSPLIT off], md_line is {md_line}")
-            stripped_md_line = md_line.strip()
-            # print(f"[stripped_md_line] *{stripped_md_line}*")
-            if stripped_md_line != "":
-                # print(f"[stripped_md_line isnt nothing] *{stripped_md_line}*")
-                current_block = current_block + stripped_md_line + "\n"
+        if not was_in_code_block:
+            print(f"[md_line] {md_line}")
+            #stripped_md_line = md_line.strip()
+            if md_line != "\n":
+                current_block = current_block + md_line.strip() + "\n"
+                print(f"C[fence {is_fence_line}][codeblk {was_in_code_block}]\n{current_block}")
             else:
                 if current_block != "":
-                    # print(f"[appending current block] \n\n********\n{current_block}\n*****\n\n")
                     blocks.append(current_block.strip())
                     current_block = ""
+
+                    print(f"D[fence {is_fence_line}][codeblk {was_in_code_block}]\n{current_block}")
         else:
             current_block = current_block + md_line + "\n"
-            print(f"[this should be the code block being built]\n{current_block}")
-    blocks.append(current_block.strip())
-    print(f"[returning list of blocks] \n\n&&&&&&&&&\n{blocks}\n&&&&&&&&&&\n\n")
+
+            print(f"E[fence {is_fence_line}][codeblk {was_in_code_block}]\n{current_block}")
+            if is_fence_line and was_in_code_block:
+                blocks.append(current_block.strip())
+                current_block = ""
+    if current_block != "":
+        blocks.append(current_block.strip())
     return blocks
+
+def markdown_to_blocks(md):
+    md_lines = md.splitlines()
+    blocks = []
+    final_blocks = []
+    current_block = ""
+    CODETEXT = False
+    for md_line in md_lines:
+        codefence_line = "```" in md_line
+        codefence_closed = CODETEXT
+
+    ## codeblock handling
+    # coeblock start
+    # codeblock finish
+    # codeblock add and flush
+        if codefence_line and not codefence_closed:
+
+            # current line is start of codeblock
+            # Check current_block is empty
+            # toggle fenceclosed
+            CODETEXT = not CODETEXT
+            if current_block != "":
+                # finish current block and start codeblock
+                blocks.append(current_block.strip())
+                current_block = md_line
+            else:
+                #just start new codeblock
+                current_block = md_line
+        if codefence_line and codefence_closed:
+            # finish codeblock
+            current_block += md_line
+            blocks.append(current_block.strip())
+            current_block = ""
+
+    ## noncodeblock handling
+    # current_block empty line check
+    # add line to current block
+
+        if current_block == "":
+            current_block = md_line.strip()
+
+    # non empty line
+    # split on \n\n
+        if md_line == "\n\n":
+            blocks.append(current_block.strip())
+    # check current block type
+        line_type =  block_to_block_type(md_line)
+    # check line type
+    # if type is head make it a 1 line block!
+        if line_type == "HEAD":
+            blocks.append(current_block.strip())
+            current_block = md_line
+
+    # ?  if same
+        if block_to_block_type(current_block) == block_to_block_type(md_line):
+            #shoudl i do different building for each block type? I think so!
+            # i think everything other than head is ok to match and continue block
+            # add line to current block
+                current_block = current_block + md_line.strip()
+
+    # ? if different
+        if block_to_block_type(current_block) != block_to_block_type(md_line):
+            # else:
+            # finish current block, 
+            # add line to new block
+            blocks.append(current_block.strip())
+            current_block = md_line
+
+    print(f"[complete blocks] {blocks}")
+
+    # clean blocks
+    for block in blocks:
+        if block != "":
+            final_blocks.append(block)
+    return final_blocks
+
 
 
 
