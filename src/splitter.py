@@ -76,58 +76,6 @@ def text_to_textnodes(text):
     result_after_link = split_nodes_link(result_after_image)
     return result_after_link
 
-def old_markdown_to_blocks(md):
-    blocks = []
-    splitted = md.split("\n\n")
-    stripped = []
-    for block in splitted:
-        stripped.append(block.strip())
-    for block in stripped:
-        if block != '':
-            if block[0] == "#":
-                # print(f"[MD 2 blcks] [HEADER BLCOK FOUND] in block: \n\n***\n{block}\n***\n\n")
-                header_split_blocks = block.split("\n", 1)
-                for hs_block in header_split_blocks:
-                    blocks.append(hs_block)
-            else:
-                blocks.append(block)
-    return blocks
-
-def oldtwo_markdown_to_blocks(md):
-    md_lines = md.splitlines()
-    blocks = []
-    current_block = ""
-    NOSPLIT = False
-    for md_line in md_lines:
-        is_fence_line = "```" in md_line
-        print(f"A[is_fence_line]     {is_fence_line}, {md_line}")
-        was_in_code_block = NOSPLIT
-        print(f"B[was_in_code_block] {was_in_code_block}, {md_line}\n")
-        if is_fence_line:
-            NOSPLIT = not NOSPLIT
-        if not was_in_code_block:
-            print(f"[md_line] {md_line}")
-            #stripped_md_line = md_line.strip()
-            if md_line != "\n":
-                current_block = current_block + md_line.strip() + "\n"
-                print(f"C[fence {is_fence_line}][codeblk {was_in_code_block}]\n{current_block}")
-            else:
-                if current_block != "":
-                    blocks.append(current_block.strip())
-                    current_block = ""
-
-                    print(f"D[fence {is_fence_line}][codeblk {was_in_code_block}]\n{current_block}")
-        else:
-            current_block = current_block + md_line + "\n"
-
-            print(f"E[fence {is_fence_line}][codeblk {was_in_code_block}]\n{current_block}")
-            if is_fence_line and was_in_code_block:
-                blocks.append(current_block.strip())
-                current_block = ""
-    if current_block != "":
-        blocks.append(current_block.strip())
-    return blocks
-
 def markdown_to_blocks(md):
     md_lines = md.splitlines()
     blocks = []
@@ -143,34 +91,20 @@ def markdown_to_blocks(md):
         print(f"[A checks]\n[md_line]({md_line})\n[block_to_block_type(current_block]{block_to_block_type(current_block)}\n[block_to_block_type(md_line)]{block_to_block_type(md_line)}")
 
     ## codeblock handling
-    # codeblock start
-    # codeblock finish
-    # codeblock add and flush
         if codefence_line and not codefence_closed:
-
             print(f"[B] {len(blocks)}")
-            # current line is start of codeblock
-            # Check current_block is empty
-            # toggle fenceclosed
             CODETEXT = not CODETEXT
             if current_block != "":
-
                 print(f"[C] {len(blocks)}")
-                # finish current block and start codeblock
                 blocks.append(current_block.strip())
                 current_block = md_line
             else:
-
                 print(f"[D] {len(blocks)}")
-                #just start new codeblock
                 current_block = md_line
-
         elif not codefence_line and codefence_closed:
             current_block = current_block + "\n" + md_line
         elif codefence_line and codefence_closed:
-
             print(f"[D] {len(blocks)}")
-            # finish codeblock
             current_block = current_block + "\n" + md_line
             blocks.append(current_block)
             current_block = ""
@@ -178,19 +112,17 @@ def markdown_to_blocks(md):
     ## noncodeblock handling
     # current_block empty line check
     # add line to current block
-
         else:
             if current_block == "":
-  
                 print(f"[E] {len(blocks)}    *line insert into empty current block")
                 print(f"[E] so current_block should be empty: ({current_block})")
                 current_block = md_line.strip()
                 print(f"[E] after insertion current_block: ({current_block})")
 
     # non empty line
-    # split on \n\n SHOULD THIS BE JUST \n????
+    # split on new line 
             else:
-                if md_line == "":
+                """if md_line == "":
                     print(f"[F] {len(blocks)}     * empty line - add and clear current block")
                     blocks.append(current_block.strip())
                     current_block = ""
@@ -199,27 +131,41 @@ def markdown_to_blocks(md):
                 # if type is head make it a 1 line block!
                 if line_type == BlockType.HEAD:
                     print(f"[H][HEAD] {len(blocks)}")
-                    current_block = current_block + md_line.strip() + "\n"
+                    blocks.append(current_block.strip())
+                    current_block = ""
+                    print(f"[I][HEAD] {len(blocks)}")
+                if line_type == BlockType.QUOT:
+                    print(f"[H][QUOT] {len(blocks)}")
+                    blocks.append(current_block)
+                    current_block = md_line.strip()
+
+                if line_type == BlockType.ORDE:
+                    print(f"[H][QUOT][single] {len(blocks)}")
                     blocks.append(current_block)
                     current_block = md_line
-                    print(f"[I][HEAD] {len(blocks)}")
- 
+ """
+
+
 # ?  if same
                 if block_to_block_type(current_block) == block_to_block_type(md_line):
                     print(f"[block types are the same] {block_to_block_type(current_block)} == {block_to_block_type(md_line)}")
 
                 # check line type
                 # if type is head make it a 1 line block!
-                    if line_type == BlockType.HEAD:
-                        print(f"[H][HEAD] {len(blocks)}")
-                        current_block = current_block + md_line.strip() + "\n"
-                        blocks.append(current_block)
-                        current_block = md_line
-                        print(f"[I][HEAD] {len(blocks)}")
+                    #if line_type == BlockType.HEAD:
+                        #print(f"[H][HEAD] {len(blocks)}")
+                        #current_block = current_block + md_line.strip() + "\n"
+                        #blocks.append(current_block)
+                        #current_block = md_line
+                        #print(f"[I][HEAD] {len(blocks)}")
                     if line_type == BlockType.PARA:
                         print(f"[H][PARA] {len(blocks)}")
                         current_block = current_block + "\n" + md_line.strip()
                         print(f"[I][PARA] {len(blocks)}")
+                    if line_type == BlockType.ORDE:
+                        current_block = current_block + "\n" + md_line.strip()
+                   
+                    #if line_type == BlockType.QUOT:
                     else:
                         print(f"[H][all the rest] {len(blocks)}")
                         #blocks.append(current_block)
@@ -230,6 +176,7 @@ def markdown_to_blocks(md):
                         print(f"[J] {len(blocks)}")
                         #current_block = current_block + md_line.strip()
 
+                    print(f"[J][after line added, current_block]\n{current_block}\n\n")
     # ? if different
                 if block_to_block_type(current_block) != block_to_block_type(md_line):
                     print(f"[K] {len(blocks)}")

@@ -55,6 +55,17 @@ which will not be **bold** formatted```
 
 ####### 7 header"""
         node = markdown_to_html_node(md)
+        html = node.to_html()
+        print(f"[copy this]\n\n{html}\n\n[stop copying]")
+        expected = """<div><p>unformatted paragraph</p><p>formatted <b>bold</b> <i>italic</i> paragraph</p><h1>Header 1</h1><h2>header 2</h2><ul><li>unordered <b>list</b> item 1</li><li>unordered <i>list</i> item 2</li><li>unordered list item 3</li></ul><ol><li>numbered list one</li><li>numbered list two</li><li>numbered list three</li></ol><pre><code>and of course the 
+infamous clode block
+which will not be **bold** formatted</code></pre><p><blockquote>quote blocks are a bit different, they may or may not have a  space after the first character, so should be <i>treated</i> <b>as one</b> block of text</blockquote><h3>other things to check:</h3><ul><li>formatting inside each block</li><li>image links</li><li>html links</li><li>malformed markdown</li><li>bold in headers</li><li>more than 6 # headers</li><li>two header lines together</li></ul><h5>5 header</h5><h6>6 header</h6><p>####### 7 header</p></div>"""
+        produced = """<div><p>unformatted paragraph</p><p>formatted <b>bold</b> <i>italic</i> paragraph</p><p> # Header 1 </p><h1>Header 1# Header 1</h1><h1>Header 1
+# Header 1</h1><p> ## header 2 </p><h2>header 2## header 2</h2><h2>header 2
+## header 2</h2><ul><li>unordered <b>list</b> item 1</li><li>unordered <i>list</i> item 2</li><li>unordered list item 3</li></ul><ol><li>numbered list one</li></ol><p>2. numbered list two 3. numbered list three</p><pre><code>and of course the 
+infamous clode block
+which will not be **bold** formatted</code></pre><p>> quote blocks are a bit different, >they may or may not have a  > space after the first character, so should be <i>treated</i> <b>as >one</b> block of text  ### other things to check: - formatting inside each block - image links - html links - malformed markdown - bold in headers - more than 6 # headers - two header lines together  ##### 5 header  ###### 6 header  ####### 7 header</p></div>"""
+        self.assertEqual(html, expected)
 
     def test_paragraphs(self):
         md = """
@@ -127,6 +138,152 @@ def dprint(*kargs, **kwargs):
         html = node.to_html()
         print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
         self.assertEqual(html, expected)
+
+    def test_paragraph_link(self):
+        md = """This is a link to [Markdown](https://www.markdownlang.com)
+"""
+
+
+        expected = """<div><p>This is a link to <a href="https://www.markdownlang.com">Markdown</a></p></div>"""
+
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
+        self.assertEqual(html, expected)
+
+    def dont_test_paragraph_pics(self):
+        md = """```
+```"""
+
+
+        expected = """<div><pre><code># here's some comments
+5. some non md files\n</code></pre></div>"""
+
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
+        self.assertEqual(html, expected)
+
+    def dont_test_ul_link(self):
+        md = """```
+```"""
+
+
+        expected = """<div><pre><code># here's some comments
+5. some non md files\n</code></pre></div>"""
+
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
+        self.assertEqual(html, expected)
+
+    def dont_test_ul_pics(self):
+        md = """```
+```"""
+
+
+        expected = """<div><pre><code># here's some comments
+5. some non md files\n</code></pre></div>"""
+
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
+        self.assertEqual(html, expected)
+
+    def dont_test_ol_link(self):
+        md = """```
+```"""
+
+
+        expected = """<div><pre><code># here's some comments
+5. some non md files\n</code></pre></div>"""
+
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
+        self.assertEqual(html, expected)
+
+    def dont_test_ol_pics(self):
+        md = """```
+```"""
+
+
+        expected = """<div><pre><code># here's some comments
+5. some non md files\n</code></pre></div>"""
+
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
+        self.assertEqual(html, expected)
+
+    def dont_test_paragraphs_newlines(self):
+        md = """```
+```"""
+
+
+        expected = """<div><pre><code># here's some comments
+5. some non md files\n</code></pre></div>"""
+
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
+        self.assertEqual(html, expected)
+
+    def dont_test_everything(self):
+        md = """```
+```"""
+
+
+        expected = """<div><pre><code># here's some comments
+5. some non md files\n</code></pre></div>"""
+
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
+        self.assertEqual(html, expected)
+
+
+    def test_quote_basic_markdown_to_html(self):
+        md = """> quote first line
+> quote second line of text
+>quote third line of text"""
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        expected = """<div><blockquote>quote first line quote second line of text quote third line of text</quoteblock></div>"""
+        print(f"[md]\n{md}\n\n[node]\n{node}\n\n[html]\n{html}\n\n[expected]\n{expected}\n\n")
+        #self.assertEqual(html, expected)
+
+    def dont_test_block_splitter_quote_missing(self):
+        block = """> quote first line
+quote second line of text
+>quote third line of text"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.PARA)
+
+    def dont_test_block_splitter_quote_double(self):
+        block = """>> quote first line
+>>> quote second line of text
+>>>>quote third line of text"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.QUOT)
+
+    def dont_test_block_splitter_quote_midline(self):
+        block = """quote > mid line
+>>> quote second line of text
+>>>>quote third line of text"""
+        result = block_to_block_type(block)
+        self.assertEqual(result, BlockType.PARA)
+
+
+
 
 
 #other ideas
