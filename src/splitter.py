@@ -88,7 +88,7 @@ def markdown_to_blocks(md):
         codefence_line = "```" in md_line
         codefence_closed = CODETEXT
         print(f"\n[A] {len(blocks)}")
-        print(f"[A checks]\n[md_line]({md_line})\n[block_to_block_type(current_block]{block_to_block_type(current_block)}\n[block_to_block_type(md_line)]{block_to_block_type(md_line)}")
+        print(f"[A checks]\n[md_line]          ****** ({md_line}) ******\n[block_to_block_type(current_block]{block_to_block_type(current_block)}\n[block_to_block_type(md_line)]{block_to_block_type(md_line)}")
 
     ## codeblock handling
         if codefence_line and not codefence_closed:
@@ -122,59 +122,30 @@ def markdown_to_blocks(md):
     # non empty line
     # split on new line 
             else:
-                """if md_line == "":
-                    print(f"[F] {len(blocks)}     * empty line - add and clear current block")
-                    blocks.append(current_block.strip())
-                    current_block = ""
-                    print(f"[G] {len(blocks)}")
-                # check line type
-                # if type is head make it a 1 line block!
-                if line_type == BlockType.HEAD:
-                    print(f"[H][HEAD] {len(blocks)}")
-                    blocks.append(current_block.strip())
-                    current_block = ""
-                    print(f"[I][HEAD] {len(blocks)}")
-                if line_type == BlockType.QUOT:
-                    print(f"[H][QUOT] {len(blocks)}")
+                if md_line == "" or md_line == "\n":
                     blocks.append(current_block)
-                    current_block = md_line.strip()
-
-                if line_type == BlockType.ORDE:
-                    print(f"[H][QUOT][single] {len(blocks)}")
-                    blocks.append(current_block)
-                    current_block = md_line
- """
-
+                    current_block = ""
 
 # ?  if same
                 if block_to_block_type(current_block) == block_to_block_type(md_line):
                     print(f"[block types are the same] {block_to_block_type(current_block)} == {block_to_block_type(md_line)}")
 
                 # check line type
-                # if type is head make it a 1 line block!
-                    #if line_type == BlockType.HEAD:
-                        #print(f"[H][HEAD] {len(blocks)}")
-                        #current_block = current_block + md_line.strip() + "\n"
-                        #blocks.append(current_block)
-                        #current_block = md_line
-                        #print(f"[I][HEAD] {len(blocks)}")
                     if line_type == BlockType.PARA:
                         print(f"[H][PARA] {len(blocks)}")
-                        current_block = current_block + "\n" + md_line.strip()
+                        current_block = current_block.strip() + "\n" + md_line.strip()
                         print(f"[I][PARA] {len(blocks)}")
-                    if line_type == BlockType.ORDE:
-                        current_block = current_block + "\n" + md_line.strip()
+                    elif line_type == BlockType.ORDE:
+                        current_block = current_block.strip() + "\n" + md_line.strip()
                    
-                    #if line_type == BlockType.QUOT:
-                    else:
+                    
+                    else:   #QUOT UNOR ORDE
                         print(f"[H][all the rest] {len(blocks)}")
                         #blocks.append(current_block)
                         current_block = current_block + "\n" + md_line.strip()
-                        #current_block = md_line
                         print(f"[I][all the rest] {len(blocks)}")
 
                         print(f"[J] {len(blocks)}")
-                        #current_block = current_block + md_line.strip()
 
                     print(f"[J][after line added, current_block]\n{current_block}\n\n")
     # ? if different
@@ -192,8 +163,8 @@ def markdown_to_blocks(md):
 
     # clean blocks
     for block in blocks:
-        if block != "":
-            final_blocks.append(block)
+        if block.strip() != "":
+            final_blocks.append(block.strip())
 
     print(f"[cleaned blocks] {final_blocks}\n")
     return final_blocks
