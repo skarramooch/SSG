@@ -77,6 +77,16 @@ def text_to_textnodes(text):
     return result_after_link
 
 def markdown_to_blocks(md):
+    blocks = md.split("\n\n")
+    non_empty_blocks = []
+    for block in blocks:
+        if block.strip() != "":
+            non_empty_blocks.append(block.strip())
+    return non_empty_blocks
+
+### below is 3 weeks of wasted time trying to do a line by line md2blks function.
+### I can complete this after I have had therapy!!
+def markdown_to_blocks_fence_aware_not_working(md):
     md_lines = md.splitlines()
     blocks = []
     final_blocks = []
@@ -122,6 +132,7 @@ def markdown_to_blocks(md):
     # non empty line
     # split on new line 
             else:
+                print(f"is this a number? {md_line.split(". ", 1)[0]} - {int(md_line.split(". ", 1)[0])}")
                 if md_line == "" or md_line == "\n":
                     blocks.append(current_block)
                     current_block = ""
@@ -135,7 +146,8 @@ def markdown_to_blocks(md):
                         print(f"[H][PARA] {len(blocks)}")
                         current_block = current_block.strip() + "\n" + md_line.strip()
                         print(f"[I][PARA] {len(blocks)}")
-                    elif line_type == BlockType.ORDE:
+                    #elif line_type == BlockType.ORDE:
+                    elif int(md_line.split(". ", 1)[0]):
                         current_block = current_block.strip() + "\n" + md_line.strip()
                    
                     
@@ -188,13 +200,11 @@ class block:
         self.block_type = block_type
 
 def block_to_block_type(md_block):
-    md = block(md_block)
-    #md.block_type == BlockType.NORM
-    if  match_block_headings(md.blocktext):
+    if match_block_headings(md_block):
         return BlockType.HEAD
-    if md.blocktext.startswith("```") and md.blocktext.endswith("```"):
+    if md_block.strip().startswith("```\n") and md_block.strip().endswith("```"):
         return BlockType.CODE
-    md_split = md.blocktext.split("\n")
+    md_split = md_block.split("\n")
     QUOTESUM = 0
     UNORDEREDSUM = 0
     ORDERSUM = 0
@@ -204,8 +214,11 @@ def block_to_block_type(md_block):
         if line.startswith ("- "):
             UNORDEREDSUM += 1
     if QUOTESUM == len(md_split):
+        #print(f"[SANITY CHECK] QUOTESUM = {QUOTESUM}\n[SANITY CHECK] md_block = \n{md_block}\n\n")
         return BlockType.QUOT
     if UNORDEREDSUM == len(md_split):
+
+        #print(f"[SANITY CHECK] UNORDEREDSUM = {UNORDEREDSUM}\n[SANITY CHECK] md_block = \n{md_block}\n\n")
         return BlockType.UNOR
     for n in range(1, len(md_split) + 1):
         if md_split[n-1].startswith(f"{str(n)}. "):
@@ -213,9 +226,7 @@ def block_to_block_type(md_block):
     if ORDERSUM == len(md_split):
         return BlockType.ORDE
 
-    if md is not None:
-        md.block_type = BlockType.PARA
-    return md.block_type
+    return BlockType.PARA
 
  
 # Headings start with 1-6 # characters, followed by a space and then the heading text.

@@ -13,10 +13,13 @@ def markdown_to_html_node(whole_markdown_doc):
     md_blocks = markdown_to_blocks(whole_markdown_doc) #splits whole_md_doc into block chunks
     htmlnode_blocks = []
     for md_block in md_blocks:
+        #print(f"md_block = block(md_block)")
+        #print(f"[md_block] = {repr(md_block)}")
+        #print(f"md_Block.block_type = {block_to_block_type(md_block)}")
         md_Block = block(md_block)
         md_Block.block_type = block_to_block_type(md_block)
         md_Block_html = block_html_wrapper(md_Block)
-        print(f"[md_Block_html] {md_Block_html}\n\n")
+        #print(f"[md_Block_html] {repr(md_Block_html)}\n\n")
         htmlnode_blocks.append(md_Block_html)
     return ParentNode("div", htmlnode_blocks)
 
@@ -86,10 +89,10 @@ def block_html_wrapper(md_Block):
 
 
 def codeblock_to_leafnode(md_Block):
-    code_leaf_text = md_Block.blocktext[3:-3].lstrip("\n")
-    code_leaf_text_node = TextNode(code_leaf_text, TextType.CODE)
+    code_leaf_text = md_Block.blocktext.strip()[3:-3].lstrip("\n")
+    code_leaf_text_node = TextNode(code_leaf_text, TextType.TEXT)
     code_leaf_html_node = text_node_to_html_node(code_leaf_text_node)
-    return ParentNode("pre", [code_leaf_html_node])
+    return ParentNode("pre", [ParentNode("code", [code_leaf_html_node])])
 
 def text_to_children(text):
     # feed in lines of text which will be processed inline
