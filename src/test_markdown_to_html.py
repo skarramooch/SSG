@@ -157,13 +157,12 @@ def dprint(*kargs, **kwargs):
         #print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
         self.assertEqual(html, expected)
 
-    def dont_test_paragraph_pics(self):
-        md = """```
-```"""
+    def test_paragraph_pics(self):
+        md = """test paragraph pics ![image](https://www.kasandbox.org/programming-images/avatars/duskpin-tree.png) hope it works!
+"""
 
 
-        expected = """<div><pre><code># here's some comments
-5. some non md files\n</code></pre></div>"""
+        expected = """<div><p>test paragraph pics <img src="https://www.kasandbox.org/programming-images/avatars/duskpin-tree.png" alt="image"></img> hope it works!</p></div>"""
 
 
         node = markdown_to_html_node(md)
