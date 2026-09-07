@@ -9,6 +9,7 @@ from shutil import copy, rmtree
 def copy_static_to_public(static, public):
     static_contents = find_dir_cont(static)
     public_contents = find_dir_cont(public)
+    print(f"copy to dest public {public_contents[0]}, {public_contents[1]}, to deleted")
     copy_to_dest(public_contents[0], public_contents[1], "deleted")
     copy_to_dest(static_contents[0], static_contents[1], public)
 
@@ -44,4 +45,4 @@ def copy_to_dest(files, dirs, todir):
         print(f"[copting f todir] f:{f} todir:{todir}")
         if not exists(f):
             copy(f, todir)
-    print(f"\nfiles and dirs copied to {todir}")
+    print(f"\nfiles and dirs copied to {todir}|\n**********\n")
