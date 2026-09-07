@@ -1,4 +1,5 @@
 from textnode import TextNode, TextType
+from static_to_public import copy_static_to_public
 
 def main():
     print(f"[main called]")
@@ -8,5 +9,6 @@ def main():
     print(f"[main called] skibbidy text_type is {skibbidy.text_type}")
     print(f"[main called] skibbidy url is {skibbidy.url}")
     print(skibbidy)
+    copy_static_to_public("static", "public")
 
 main()
