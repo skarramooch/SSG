@@ -13,7 +13,6 @@ class TestMarkdownToHtml(unittest.TestCase):
             "<div><p>simple <b>I said SIMPLE</b> text</p></div>",
         )
 
-
     def test_simple_quoteblock(self):
         md = """
 > quote blocks are a bit different,
@@ -24,6 +23,23 @@ class TestMarkdownToHtml(unittest.TestCase):
         html = node.to_html()
         expected = """<div><blockquote>quote blocks are a bit different, they may or may not have a space after the first character, so should be <i>treated</i> <b>as one</b> block of text</blockquote></div>"""
         self.assertEqual(html, expected)
+        self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
+
+
+    def test_complex_quoteblock(self):
+        md = """
+> quote blocks are a bit different,
+>they may or may not have a 
+> space after the first character, so should be _treated_ **as
+>one** block of text. 
+> There might also be an
+>
+>empty line in this
+> scenario"""
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        expected = """<div><blockquote>quote blocks are a bit different, they may or may not have a space after the first character, so should be <i>treated</i> <b>as one</b> block of text. There might also be an empty line in this scenario</blockquote></div>"""
+        self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
 
     def test_simple_block(self):
         md = """unformatted paragraph
@@ -73,6 +89,7 @@ which will not be **bold** formatted```
 infamous clode block
 which will not be **bold** formatted</code></pre><blockquote>quote blocks are a bit different, they may or may not have a space after the first character, so should be <i>treated</i> <b>as one</b> block of text</blockquote><h3>other things to check:</h3><ul><li>formatting inside each block</li><li>image links</li><li>html links</li><li>malformed markdown</li><li>bold in headers</li><li>more than 6 # headers</li><li>two header lines together</li></ul><h5>5 header</h5><h6>6 header</h6><p>####### 7 header</p></div>"""
         self.assertEqual(html, expected)
+        self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
 
     def test_paragraphs(self):
         md = """
@@ -104,6 +121,7 @@ the **same** even with inline stuff
         node = markdown_to_html_node(md)
         html = node.to_html()
         self.assertEqual(html, expected)
+        self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
 
 
     def test_tabbed_numbered_codeblock(self):
@@ -138,24 +156,17 @@ def dprint(*kargs, **kwargs):
 4. not separated paragraphs
 5. some non md files\n</code></pre></div>"""
 
-
         node = markdown_to_html_node(md)
         html = node.to_html()
-        #print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
-        self.assertEqual(html, expected)
+        self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
 
     def test_paragraph_link(self):
-        md = """This is a link to [Markdown](https://www.markdownlang.com)
-"""
-
-
+        md = """This is a link to [Markdown](https://www.markdownlang.com)"""
         expected = """<div><p>This is a link to <a href="https://www.markdownlang.com">Markdown</a></p></div>"""
-
-
         node = markdown_to_html_node(md)
         html = node.to_html()
-        #print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
-        self.assertEqual(html, expected)
+        self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
+
 
     def test_paragraph_pics(self):
         md = """test paragraph pics ![image](https://www.kasandbox.org/programming-images/avatars/duskpin-tree.png) hope it works!
@@ -167,92 +178,122 @@ def dprint(*kargs, **kwargs):
 
         node = markdown_to_html_node(md)
         html = node.to_html()
-        #print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
-        self.assertEqual(html, expected)
+        self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
 
-    def dont_test_ul_link(self):
+    def test_code_paragraph_pics(self):
         md = """```
-```"""
+test paragraph pics ![image](https://www.kasandbox.org/programming-images/avatars/duskpin-tree.png) hope it works!```
+"""
 
 
-        expected = """<div><pre><code># here's some comments
-5. some non md files\n</code></pre></div>"""
+        expected = """<div><pre><code>test paragraph pics ![image](https://www.kasandbox.org/programming-images/avatars/duskpin-tree.png) hope it works!</code></pre></div>"""
 
 
         node = markdown_to_html_node(md)
         html = node.to_html()
-        #print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
-        self.assertEqual(html, expected)
+        self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
 
-    def dont_test_ul_pics(self):
-        md = """```
-```"""
-
-
-        expected = """<div><pre><code># here's some comments
-5. some non md files\n</code></pre></div>"""
+    def test_ul_link(self):
+        md = """
+- unordered link line 1
+- unordered link line 2
+- unordered link line 3
+"""
 
 
-        node = markdown_to_html_node(md)
-        html = node.to_html()
-        #print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
-        self.assertEqual(html, expected)
-
-    def dont_test_ol_link(self):
-        md = """```
-```"""
-
-
-        expected = """<div><pre><code># here's some comments
-5. some non md files\n</code></pre></div>"""
+        expected = """<div><ul><li>unordered link line 1</li><li>unordered link line 2</li><li>unordered link line 3</li></ul></div>"""
 
 
         node = markdown_to_html_node(md)
         html = node.to_html()
-        #print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
-        self.assertEqual(html, expected)
+        self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
 
-    def dont_test_ol_pics(self):
+    def test_code_ul_link(self):
         md = """```
-```"""
+- unordered link line 1
+- unordered link line 2
+- unordered link line 3```"""
 
 
-        expected = """<div><pre><code># here's some comments
-5. some non md files\n</code></pre></div>"""
+        expected = """<div><pre><code>- unordered link line 1
+- unordered link line 2
+- unordered link line 3</code></pre></div>"""
 
 
         node = markdown_to_html_node(md)
         html = node.to_html()
-        #print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
-        self.assertEqual(html, expected)
+        self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
 
-    def dont_test_paragraphs_newlines(self):
+
+    def test_code_ol_formatting(self):
         md = """```
+1. ordered list one **with** bold formatting
+2. ordered list two _with_ italic formatting
+3. ordered list three `with` code formatting
+4. ordered list four with random #hastags#
 ```"""
 
-
-        expected = """<div><pre><code># here's some comments
-5. some non md files\n</code></pre></div>"""
-
+        expected = """<div><pre><code>1. ordered list one **with** bold formatting
+2. ordered list two _with_ italic formatting
+3. ordered list three `with` code formatting
+4. ordered list four with random #hastags#
+</code></pre></div>"""
 
         node = markdown_to_html_node(md)
         html = node.to_html()
-        #print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
-        self.assertEqual(html, expected)
-
-    def dont_test_everything(self):
-        md = """```
-```"""
+        self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
 
 
-        expected = """<div><pre><code># here's some comments
-5. some non md files\n</code></pre></div>"""
+    def test_ol_formatting(self):
+        md = """
+1. ordered list one **with** bold formatting
+2. ordered list two _with_ italic formatting
+3. ordered list three `with` code formatting
+4. ordered list four with random #hastags#
+"""
 
+        expected = """<div><ol><li>ordered list one <b>with</b> bold formatting</li><li>ordered list two <i>with</i> italic formatting</li><li>ordered list three <code>with</code> code formatting</li><li>ordered list four with random #hastags#</li></ol></div>"""
 
         node = markdown_to_html_node(md)
         html = node.to_html()
-        #print(f"\n\n[actual]\n\n{html}\n\n[expected]\n\n{expected}\n\n")
-        self.assertEqual(html, expected)
+        self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
+
+    def test_ol_double_digit_formatting(self):
+        md = """
+1. ordered list one **with** bold formatting
+2. ordered list two _with_ italic formatting
+3. ordered list three `with` code formatting
+4. ordered list four with random #hastags#
+5. five
+6. six
+7. seven
+8. eight
+9. nine
+10. ten
+11. eleven
+12. twelve
+"""
+
+        expected = """<div><ol><li>ordered list one <b>with</b> bold formatting</li><li>ordered list two <i>with</i> italic formatting</li><li>ordered list three <code>with</code> code formatting</li><li>ordered list four with random #hastags#</li><li>five</li><li>six</li><li>seven</li><li>eight</li><li>nine</li><li>ten</li><li>eleven</li><li>twelve</li></ol></div>"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
+
+
+    def test_ol_pics_links(self):
+        md = """
+1. ordered list one **with** pic ![image](https://www.kasandbox.org/programming-images/avatars/duskpin-tree.png) inline 
+2. ordered list two _with_ link [Markdown](https://www.markdownlang.com) inline
+"""
+
+        expected = """<div><ol><li>ordered list one <b>with</b> pic <img src="https://www.kasandbox.org/programming-images/avatars/duskpin-tree.png" alt="image"></img> inline</li><li>ordered list two <i>with</i> link <a href="https://www.markdownlang.com">Markdown</a> inline</li></ol></div>"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
+
+
 
 
     def test_quote_basic_markdown_to_html(self):
@@ -261,41 +302,6 @@ def dprint(*kargs, **kwargs):
 >quote third line of text"""
         node = markdown_to_html_node(md)
         html = node.to_html()
-        expected = """<div><blockquote>quote first line quote second line of text quote third line of text</quoteblock></div>"""
-        #print(f"[md]\n{md}\n\n[node]\n{node}\n\n[html]\n{html}\n\n[expected]\n{expected}\n\n")
-        #self.assertEqual(html, expected)
+        expected = """<div><blockquote>quote first line quote second line of text quote third line of text</blockquote></div>"""
+        self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
 
-    def dont_test_block_splitter_quote_missing(self):
-        block = """> quote first line
-quote second line of text
->quote third line of text"""
-        result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.PARA)
-
-    def dont_test_block_splitter_quote_double(self):
-        block = """>> quote first line
->>> quote second line of text
->>>>quote third line of text"""
-        result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.QUOT)
-
-    def dont_test_block_splitter_quote_midline(self):
-        block = """quote > mid line
->>> quote second line of text
->>>>quote third line of text"""
-        result = block_to_block_type(block)
-        self.assertEqual(result, BlockType.PARA)
-
-
-
-
-
-#other ideas
-# paragraphs with other line breaks
-# paragraphs into unordered and numbered lists, code, 
-# paragraphs with pics
-# paragraphs with links
-# uo lists with pics
-# uo lists with links
-# ol lists with pics
-# ol lists with links

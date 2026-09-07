@@ -53,7 +53,8 @@ def block_html_wrapper(md_Block):
         quote_lines = "" 
         for line in block_lines:
             stripped_quote_line = line[1:].strip()
-            quote_lines += stripped_quote_line + " "
+            if stripped_quote_line != "":
+                quote_lines += stripped_quote_line + " "
         quotepara = quote_lines.strip()
         quotetext = text_to_children(quotepara)
         html_block = ParentNode("blockquote", quotetext)
@@ -64,7 +65,7 @@ def block_html_wrapper(md_Block):
         block_lines = md_Block.blocktext.splitlines()
         html_lines = []
         for line in block_lines:
-            html_line = text_to_children(line[2:])
+            html_line = text_to_children(line[2:].strip())
             html_lines.append(ParentNode("li", html_line))
         html_block = ParentNode("ul", html_lines)
         return html_block
@@ -74,7 +75,7 @@ def block_html_wrapper(md_Block):
         html_lines = []
         for prefixed_line in block_lines:
             line = prefixed_line.split(". ", 1)
-            html_line = text_to_children(line[1])
+            html_line = text_to_children(line[1].strip())
             html_lines.append(ParentNode("li", html_line))
         html_block = ParentNode("ol", html_lines)
         return html_block
