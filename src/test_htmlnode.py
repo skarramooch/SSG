@@ -70,20 +70,20 @@ class TestHTMLNode(unittest.TestCase):
 ### parent node tests
 
     def test_add_parentnode(self):
-        node = ParentNode("p", [], "")
+        node = ParentNode("p", [])
 
     def test_valueerror(self):
-        node = ParentNode("", [], "")
+        node = ParentNode("", [])
         self.assertRaises(ValueError)
 
     def test_no_children(self):
-        node = ParentNode("a", None, "")
+        node = ParentNode("a", None)
         self.assertRaises(ValueError)
 
     def test_children(self):
-        jethro = LeafNode("p", "Jethro", "")
-        isabel = LeafNode("p", "Isabel", "")
-        parent = ParentNode("p", [jethro, isabel], "")
+        jethro = LeafNode("p", "Jethro")
+        isabel = LeafNode("p", "Isabel")
+        parent = ParentNode("p", [jethro, isabel])
         self.assertEqual(parent.to_html(), '<p><p>Jethro</p><p>Isabel</p></p>')
 
     def test_boot_example(self):

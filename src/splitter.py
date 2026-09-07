@@ -69,33 +69,130 @@ def split_nodes_link(old_nodes: list[TextNode]) -> list[TextNode]:
 
 def text_to_textnodes(text):
     node = TextNode(text, TextType.TEXT)
-    result_bold = split_nodes_delimiter([node], "**", TextType.BOLD)
-    result_italic = split_nodes_delimiter(result_bold, "_", TextType.ITALIC)
-    result_code = split_nodes_delimiter(result_italic, "`", TextType.CODE)
-    result_image = split_nodes_image(result_code)
-    result_link = split_nodes_link(result_image)
-    return result_link
+    result_after_bold = split_nodes_delimiter([node], "**", TextType.BOLD)
+    result_after_italic = split_nodes_delimiter(result_after_bold, "_", TextType.ITALIC)
+    result_after_code = split_nodes_delimiter(result_after_italic, "`", TextType.CODE)
+    result_after_image = split_nodes_image(result_after_code)
+    result_after_link = split_nodes_link(result_after_image)
+    return result_after_link
 
 def markdown_to_blocks(md):
+    blocks = md.split("\n\n")
+    non_empty_blocks = []
+    for block in blocks:
+        if block.strip() != "":
+            non_empty_blocks.append(block.strip())
+    return non_empty_blocks
+
+### below is 3 weeks of wasted time trying to do a line by line md2blks function.
+### I can complete this after I have had therapy!!
+def markdown_to_blocks_fence_aware_not_working(md):
+    md_lines = md.splitlines()
     blocks = []
-    splitted = md.split("\n\n")
-    stripped = []
-    for block in splitted:
-        stripped.append(block.strip())
-    for block in stripped:
-        if block != '':
-            blocks.append(block)
-    return blocks
+    final_blocks = []
+    current_block = ""
+    CODETEXT = False
+    for md_line in md_lines:
+        # check current block type
+        line_type =  block_to_block_type(md_line)
+        codefence_line = "```" in md_line
+        codefence_closed = CODETEXT
+        print(f"\n[A] {len(blocks)}")
+        print(f"[A checks]\n[md_line]          ****** ({md_line}) ******\n[block_to_block_type(current_block]{block_to_block_type(current_block)}\n[block_to_block_type(md_line)]{block_to_block_type(md_line)}")
+
+    ## codeblock handling
+        if codefence_line and not codefence_closed:
+            print(f"[B] {len(blocks)}")
+            CODETEXT = not CODETEXT
+            if current_block != "":
+                print(f"[C] {len(blocks)}")
+                blocks.append(current_block.strip())
+                current_block = md_line
+            else:
+                print(f"[D] {len(blocks)}")
+                current_block = md_line
+        elif not codefence_line and codefence_closed:
+            current_block = current_block + "\n" + md_line
+        elif codefence_line and codefence_closed:
+            print(f"[D] {len(blocks)}")
+            current_block = current_block + "\n" + md_line
+            blocks.append(current_block)
+            current_block = ""
+
+    ## noncodeblock handling
+    # current_block empty line check
+    # add line to current block
+        else:
+            if current_block == "":
+                print(f"[E] {len(blocks)}    *line insert into empty current block")
+                print(f"[E] so current_block should be empty: ({current_block})")
+                current_block = md_line.strip()
+                print(f"[E] after insertion current_block: ({current_block})")
+
+    # non empty line
+    # split on new line 
+            else:
+                print(f"is this a number? {md_line.split(". ", 1)[0]} - {int(md_line.split(". ", 1)[0])}")
+                if md_line == "" or md_line == "\n":
+                    blocks.append(current_block)
+                    current_block = ""
+
+# ?  if same
+                if block_to_block_type(current_block) == block_to_block_type(md_line):
+                    print(f"[block types are the same] {block_to_block_type(current_block)} == {block_to_block_type(md_line)}")
+
+                # check line type
+                    if line_type == BlockType.PARA:
+                        print(f"[H][PARA] {len(blocks)}")
+                        current_block = current_block.strip() + "\n" + md_line.strip()
+                        print(f"[I][PARA] {len(blocks)}")
+                    #elif line_type == BlockType.ORDE:
+                    elif int(md_line.split(". ", 1)[0]):
+                        current_block = current_block.strip() + "\n" + md_line.strip()
+                   
+                    
+                    else:   #QUOT UNOR ORDE
+                        print(f"[H][all the rest] {len(blocks)}")
+                        #blocks.append(current_block)
+                        current_block = current_block + "\n" + md_line.strip()
+                        print(f"[I][all the rest] {len(blocks)}")
+
+                        print(f"[J] {len(blocks)}")
+
+                    print(f"[J][after line added, current_block]\n{current_block}\n\n")
+    # ? if different
+                if block_to_block_type(current_block) != block_to_block_type(md_line):
+                    print(f"[K] {len(blocks)}")
+                # else:
+                # finish current block, 
+                # add line to new block
+                    blocks.append(current_block.strip())
+                    current_block = md_line
+                    print(f"[L] {len(blocks)}")
+    print(f"\n[M] is anything left in current_block? \ncurrent_block: \n{current_block}\n")
+    blocks.append(current_block.strip())
+    print(f"[complete blocks] {blocks}\n")
+
+    # clean blocks
+    for block in blocks:
+        if block.strip() != "":
+            final_blocks.append(block.strip())
+
+    print(f"[cleaned blocks] {final_blocks}\n")
+    return final_blocks
+
+
+
 
 
 class BlockType(Enum):
-    PARA = "paragraph"  # #paragrap
+    PARA = "paragraph"  # #paragraph
     HEAD = "heading"    # #heading
     CODE = "code"       # #code
     QUOT = "quote"      # #quote
     UNOR = "unordered"  # #unordered_list
     ORDE = "ordered"    # #ordered_list
-    NORM = "normal"
+    #NORM = "normal"
 
 class block:
     def __init__(self, blocktext, block_type = None):
@@ -103,13 +200,11 @@ class block:
         self.block_type = block_type
 
 def block_to_block_type(md_block):
-    md = block(md_block)
-    #md.block_type == BlockType.NORM
-    if  match_block_headings(md.blocktext):
+    if match_block_headings(md_block):
         return BlockType.HEAD
-    if md.blocktext.startswith("```") and md.blocktext.endswith("```"):
+    if md_block.strip().startswith("```\n") and md_block.strip().endswith("```"):
         return BlockType.CODE
-    md_split = md.blocktext.split("\n")
+    md_split = md_block.split("\n")
     QUOTESUM = 0
     UNORDEREDSUM = 0
     ORDERSUM = 0
@@ -119,8 +214,11 @@ def block_to_block_type(md_block):
         if line.startswith ("- "):
             UNORDEREDSUM += 1
     if QUOTESUM == len(md_split):
+        #print(f"[SANITY CHECK] QUOTESUM = {QUOTESUM}\n[SANITY CHECK] md_block = \n{md_block}\n\n")
         return BlockType.QUOT
     if UNORDEREDSUM == len(md_split):
+
+        #print(f"[SANITY CHECK] UNORDEREDSUM = {UNORDEREDSUM}\n[SANITY CHECK] md_block = \n{md_block}\n\n")
         return BlockType.UNOR
     for n in range(1, len(md_split) + 1):
         if md_split[n-1].startswith(f"{str(n)}. "):
@@ -128,9 +226,7 @@ def block_to_block_type(md_block):
     if ORDERSUM == len(md_split):
         return BlockType.ORDE
 
-    if md is not None:
-        md.block_type = BlockType.NORM
-    return md.block_type
+    return BlockType.PARA
 
  
 # Headings start with 1-6 # characters, followed by a space and then the heading text.
