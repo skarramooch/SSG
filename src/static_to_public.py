@@ -37,7 +37,11 @@ def copy_to_dest(files, dirs, todir):
         rmtree(todir)
 
     for d in dirs:
-        mkdir(d)
+        print(f"[copying d todir] d:{d} todir:{todir}")
+        if not exists(d):
+            mkdir(d)
     for f in files:
-        copy(f, todir)
+        print(f"[copting f todir] f:{f} todir:{todir}")
+        if not exists(f):
+            copy(f, todir)
     print(f"\nfiles and dirs copied to {todir}")
