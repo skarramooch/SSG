@@ -23,26 +23,35 @@ def find_dir_cont(fromdir):
         print(f"directory {fromdir} exists")
         print(f"contents are : {items}")
         for item in items:
-            diritem = fromdir +  "/" + item 
-            print(f"[item] {item} isfile(diritem): {isfile(diritem)}")
+            diritem =  "/" + item
+            # print(f"[item] {item} isfile(diritem): {isfile(diritem)}")
             if isfile(diritem):
+                # pathdiritem = join(fromdir, diritem)
                 files.append(diritem)
             else:
+                # pathdiritem = join(fromdir, diritem)
                 dirs.append(diritem)
                 find_dir_cont(diritem)
     print(f"returing files {files}, and dirs {dirs}\n")
     return files, dirs
 
-def copy_to_dest(files, dirs, todir):
+def copy_to_dest(files, dirs,  todir):
+    print(f"[todir]: {todir}")
+    print(f"[{todir} exists] {exists(todir)}")
+    if not exists(todir):
+        mkdir(todir)
+        print(f"[{todir} ] created {exists(todir)}")
     if todir != "deleted":
         rmtree(todir)
 
     for d in dirs:
         print(f"[copying d todir] d:{d} todir:{todir}")
-        if not exists(d):
-            mkdir(d)
+        fulld = todir + d
+        if not exists(fulld):
+            mkdir(fulld)
     for f in files:
         print(f"[copting f todir] f:{f} todir:{todir}")
-        if not exists(f):
-            copy(f, todir)
+        fullf = todir + f
+        if not exists(fullf):
+            copy(fullf, todir)
     print(f"\nfiles and dirs copied to {todir}|\n**********\n")
