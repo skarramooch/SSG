@@ -11,14 +11,21 @@ from textnode import text_node_to_html_node, TextNode, TextType
 
 
 def extract_title(markdown):
-    pass
+    print(f"[extract_title] markdown:\n{markdown}\n")
     # It should pull the h1 header from the markdown file (the line that starts with a single #) and return it.
     # If there is no h1 header, raise an exception.
     # extract_title("# Hello") should return "Hello" (strip the # and any leading or trailing whitespace)
-    #
+    first_line = markdown.splitlines()[0]
+    if first_line.startswith("# "):
+        header = first_line.split("# ", 1)[1]
+        return header
+    else:
+        raise exception("first line did not start with H1")
 
 def generate_page(from_path, template_path, dest_path):
-    pass
+    print(f"[generate_page] from_path {from_path}")
+    print(f"[generate_page] template_path {template_path}")
+    print(f"[generate_page] dest_path {dest_path}")
 # Print a message like "Generating page from from_path to dest_path using template_path".
 # Read the markdown file at from_path and store the contents in a variable.
 # Read the template file at template_path and store the contents in a variable.
