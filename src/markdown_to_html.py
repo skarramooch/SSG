@@ -48,8 +48,8 @@ def generate_page(from_path, template_path, dest_path):
     title = extract_title(markdown)
     print(f"\n[title] \n{title}")
     template.replace("{{ Title }}", title)
-    template.replace("{{ content }}", html_string)
-    print(f"\n[full html file]\n{t}\n")
+    template.replace("{{ Content }}", html_string)
+    print(f"\n[full html file]\n{template}\n")
 
 
 def markdown_to_html_node(whole_markdown_doc):
