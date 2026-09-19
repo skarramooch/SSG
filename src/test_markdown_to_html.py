@@ -318,3 +318,4 @@ class test_extract_title(unittest.TestCase):
 class test_generate_page(unittest.TestCase):
     def test_easy_page(self):
         print(f"testing generate page")
+        full_html_file = generate_page("content/index.md", "template.html", "public")

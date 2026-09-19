@@ -33,6 +33,23 @@ def generate_page(from_path, template_path, dest_path):
 # Use the extract_title function to grab the title of the page.
 # Replace the {{ Title }} and {{ Content }} placeholders in the template with the HTML and title you generated.
 # Write the new full HTML page to a file at dest_path. Be sure to create any necessary directories if they don't exist.
+    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+    with open(from_path, 'r', encoding="utf8") as f:
+        markdown = f.read()
+    print(f"[from file read and closed successfully] {f.closed}")
+    with open(template_path, 'r', encoding="utf8") as t:
+        template = t.read()
+    print(f"[template file read and closed successfully] {t.closed}")
+    print(f"files opened")
+    html_node = markdown_to_html_node(markdown)
+    print(f"\n[html node] \n{html_node}")
+    html_string = html_node.to_html()
+    print(f"\n[html string] \n{html_string}")
+    title = extract_title(markdown)
+    print(f"\n[title] \n{title}")
+    template.replace("{{ Title }}", title)
+    template.replace("{{ content }}", html_string)
+    print(f"\n[full html file]\n{t}\n")
 
 
 def markdown_to_html_node(whole_markdown_doc):
