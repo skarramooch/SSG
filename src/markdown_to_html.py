@@ -8,7 +8,8 @@
 from splitter import markdown_to_blocks, block_to_block_type, block, text_to_textnodes, BlockType
 from htmlnode import HTMLNode, ParentNode, LeafNode
 from textnode import text_node_to_html_node, TextNode, TextType
-
+from os import mkdir
+from os.path import exists
 
 def extract_title(markdown):
     print(f"[extract_title] markdown:\n{markdown}\n")
@@ -50,6 +51,16 @@ def generate_page(from_path, template_path, dest_path):
     t_template = template.replace("{{ Title }}", title)
     full_file = t_template.replace("{{ Content }}", html_string)
     print(f"\n[full html file]\n{full_file}\n")
+    if not exists(dest_path):
+        print(f"creating dest_path: {dest_path}")
+        mkdir(dest_path)
+    else:
+        print(f"dest_path already exists: {dest_path}")
+    print(f"[dest path should now exist, saving html document")
+    with open(f"{dest_path}/full_file.html", 'w', encoding="utf8") as j:
+        j.write(full_file)
+    print(f"[full_file written to] {dest_path}/full_file.html")
+
 
 
 def markdown_to_html_node(whole_markdown_doc):
