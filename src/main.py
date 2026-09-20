@@ -1,5 +1,6 @@
 from textnode import TextNode, TextType
 from static_to_public import copy_static_to_public
+from markdown_to_html import generate_page
 
 def main():
 #    print(f"[main called]")

@@ -24,9 +24,9 @@ def extract_title(markdown):
         raise exception("first line did not start with H1")
 
 def generate_page(from_path, template_path, dest_path):
-    print(f"[generate_page] from_path {from_path}")
-    print(f"[generate_page] template_path {template_path}")
-    print(f"[generate_page] dest_path {dest_path}")
+    # print(f"[generate_page] from_path {from_path}")
+    # print(f"[generate_page] template_path {template_path}")
+    # print(f"[generate_page] dest_path {dest_path}")
 # Print a message like "Generating page from from_path to dest_path using template_path".
 # Read the markdown file at from_path and store the contents in a variable.
 # Read the template file at template_path and store the contents in a variable.
@@ -37,30 +37,30 @@ def generate_page(from_path, template_path, dest_path):
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     with open(from_path, 'r', encoding="utf8") as f:
         markdown = f.read()
-    print(f"[from file read and closed successfully] {f.closed}")
+    # print(f"[from file read and closed successfully] {f.closed}")
     with open(template_path, 'r', encoding="utf8") as t:
         template = t.read()
-    print(f"[template file read and closed successfully] {t.closed}")
-    print(f"files opened")
+    # print(f"[template file read and closed successfully] {t.closed}")
+    # print(f"files opened")
     html_node = markdown_to_html_node(markdown)
-    print(f"\n[html node] \n{html_node}")
+    # print(f"\n[html node] \n{html_node}")
     html_string = html_node.to_html()
-    print(f"\n[html string] \n{html_string}")
+    # print(f"\n[html string] \n{html_string}")
     title = extract_title(markdown)
-    print(f"\n[title] \n{title}")
+    # print(f"\n[title] \n{title}")
     t_template = template.replace("{{ Title }}", title)
     full_file = t_template.replace("{{ Content }}", html_string)
-    print(f"\n[full html file]\n{full_file}\n")
+    # print(f"\n[full html file]\n{full_file}\n")
     dest_path_folder = dest_path.split("/", -1)[0]
     if not exists(dest_path_folder):
         print(f"creating dest_path_folder: {dest_path_folder}")
         mkdir(dest_path_folder)
     else:
         print(f"dest_path_folder already exists: {dest_path_folder}")
-    print(f"[dest path should now exist, saving html document")
+    # print(f"[dest path should now exist, saving html document")
     with open(dest_path, 'w', encoding="utf8") as j:
         j.write(full_file)
-    print(f"[full_file written to] {dest_path}")
+    # print(f"[full_file written to] {dest_path}")
 
 
 
