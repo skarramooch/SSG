@@ -10,5 +10,6 @@ def main():
 #    print(f"[main called] skibbidy url is {skibbidy.url}")
 #    print(skibbidy)
     copy_static_to_public("static", "public")
+    generate_page("content/index.md", "template.html", "public/index.html")
 
 main()
