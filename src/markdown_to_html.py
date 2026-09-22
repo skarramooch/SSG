@@ -51,10 +51,15 @@ def generate_page(from_path, template_path, dest_path):
     t_template = template.replace("{{ Title }}", title)
     full_file = t_template.replace("{{ Content }}", html_string)
     # print(f"\n[full html file]\n{full_file}\n")
-    dest_path_folder = dest_path.split("/", -1)[0]
-    if not exists(dest_path_folder):
-        print(f"creating dest_path_folder: {dest_path_folder}")
-        mkdir(dest_path_folder)
+    dest_path_list = dest_path.split("/")
+    print(f"[dest_path_list]{dest_path_list}")
+    dest_path_folder = dest_path_list[0]
+    for n in range(1, len(dest_path_list) -1):
+        dest_path_folder = dest_path_folder + "/" + dest_path_list[n]
+        print(f"[checking dest folders] {dest_path_folder}")
+        if not exists(dest_path_folder):
+            print(f"creating dest_path_folder: {dest_path_folder}")
+            mkdir(dest_path_folder)
     else:
         print(f"dest_path_folder already exists: {dest_path_folder}")
     # print(f"[dest path should now exist, saving html document")
