@@ -1,6 +1,6 @@
 import unittest
 #from htmlnode import markdown_to_html_node, to_html
-from markdown_to_html import markdown_to_html_node, extract_title, generate_page
+from markdown_to_html import markdown_to_html_node, extract_title, generate_page, generate_pages_recursive
 
 
 class TestMarkdownToHtml(unittest.TestCase):
@@ -323,3 +323,10 @@ class test_generate_page(unittest.TestCase):
     def test_easy_page_w_new_folder(self):
         print(f"testing generate page")
         full_html_file = generate_page("content/index.md", "template.html", "public2/index.html")
+       
+
+class TestGeneratePagesRecursive(unittest.TestCase):
+    def test_folder_finder(self):
+        print(f"[testing recursive]")
+        recursive_search = generate_pages_recursive("content", "template.html", "public3")
+

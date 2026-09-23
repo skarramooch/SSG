@@ -8,11 +8,11 @@
 from splitter import markdown_to_blocks, block_to_block_type, block, text_to_textnodes, BlockType
 from htmlnode import HTMLNode, ParentNode, LeafNode
 from textnode import text_node_to_html_node, TextNode, TextType
-from os import mkdir
-from os.path import exists
+from os import listdir,mkdir
+from os.path import exists, isdir, isfile
 
 def extract_title(markdown):
-    print(f"[extract_title] markdown:\n{markdown}\n")
+    # print(f"[extract_title] markdown:\n{markdown}\n")
     # It should pull the h1 header from the markdown file (the line that starts with a single #) and return it.
     # If there is no h1 header, raise an exception.
     # extract_title("# Hello") should return "Hello" (strip the # and any leading or trailing whitespace)
@@ -24,50 +24,53 @@ def extract_title(markdown):
         raise exception("first line did not start with H1")
 
 def generate_page(from_path, template_path, dest_path):
-    # print(f"[generate_page] from_path {from_path}")
-    # print(f"[generate_page] template_path {template_path}")
-    # print(f"[generate_page] dest_path {dest_path}")
-# Print a message like "Generating page from from_path to dest_path using template_path".
-# Read the markdown file at from_path and store the contents in a variable.
-# Read the template file at template_path and store the contents in a variable.
-# Use your markdown_to_html_node function and .to_html() method to convert the markdown file to an HTML string.
-# Use the extract_title function to grab the title of the page.
-# Replace the {{ Title }} and {{ Content }} placeholders in the template with the HTML and title you generated.
-# Write the new full HTML page to a file at dest_path. Be sure to create any necessary directories if they don't exist.
     print(f"Generating page from {from_path} to {dest_path} using {template_path}")
     with open(from_path, 'r', encoding="utf8") as f:
         markdown = f.read()
-    # print(f"[from file read and closed successfully] {f.closed}")
     with open(template_path, 'r', encoding="utf8") as t:
         template = t.read()
-    # print(f"[template file read and closed successfully] {t.closed}")
-    # print(f"files opened")
     html_node = markdown_to_html_node(markdown)
-    # print(f"\n[html node] \n{html_node}")
     html_string = html_node.to_html()
-    # print(f"\n[html string] \n{html_string}")
     title = extract_title(markdown)
-    # print(f"\n[title] \n{title}")
+    # reading files
     t_template = template.replace("{{ Title }}", title)
     full_file = t_template.replace("{{ Content }}", html_string)
-    # print(f"\n[full html file]\n{full_file}\n")
+
+    # file structure
     dest_path_list = dest_path.split("/")
-    print(f"[dest_path_list]{dest_path_list}")
     dest_path_folder = dest_path_list[0]
-    for n in range(1, len(dest_path_list) -1):
+    print(f"[gen pg 42] dest_path_folder: {dest_path_folder}")
+    if not exists(dest_path_folder):
+        mkdir(dest_path_folder)
+    for n in range(1, len(dest_path_list) - 1):
         dest_path_folder = dest_path_folder + "/" + dest_path_list[n]
-        print(f"[checking dest folders] {dest_path_folder}")
+        print(f"[gen pg 45] checking dest_path_folder: exists({dest_path_folder}) {exists(dest_path_folder)}")
         if not exists(dest_path_folder):
             print(f"creating dest_path_folder: {dest_path_folder}")
             mkdir(dest_path_folder)
-    else:
-        print(f"dest_path_folder already exists: {dest_path_folder}")
-    # print(f"[dest path should now exist, saving html document")
+        else:
+            print(f"[gen page] dest_path_folder already exists: {dest_path_folder}")
+    print(f"[gen pg] dest path should now exist {exists(dest_path_folder)}, saving html document")
     with open(dest_path, 'w', encoding="utf8") as j:
         j.write(full_file)
     # print(f"[full_file written to] {dest_path}")
 
 
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+    # explore contect path
+    # when file found, generate_page
+    print(f"[exploring dir_path_content] {dir_path_content}") 
+    dir_list = listdir(dir_path_content)
+    print(f"[directory contents] {dir_list}")
+    for folder in dir_list:
+        folder_path = dir_path_content + "/" + folder
+        print(f"[checking folder_path] {folder_path} isdir: {isdir(folder_path)} isfile: {isfile(folder_path)}")
+        if isdir(folder_path):
+            print(f"[folder_path {folder_path} is a directory]")
+            generate_pages_recursive(folder_path, template_path, dest_dir_path + "/" + folder)
+        else:
+            filename = folder.rsplit(".md", 1)[0]
+            generate_page(folder_path, template_path, dest_dir_path + "/" + filename + ".html")
 
 def markdown_to_html_node(whole_markdown_doc):
     md_blocks = markdown_to_blocks(whole_markdown_doc) #splits whole_md_doc into block chunks
