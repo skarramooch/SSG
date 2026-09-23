@@ -1,10 +1,3 @@
-#done# Split the markdown into blocks (you already have a function for this)
-#done# Loop over each block:
- #done# Determine the type of block (you already have a function for this)
-#    Based on the type of block, create a new HTMLNode with the proper data
-#    Assign the proper child HTMLNode objects to the block node. I created a shared text_to_children(text) function that works for all block types. It takes a string of text and returns a list of HTMLNodes that represent the inline markdown using previously created functions (think TextNode -> HTMLNode).
-#    The "code" block is a bit of a special case: it should not do any inline markdown parsing of its children. I didn't use my text_to_children function for this block type, I manually made a TextNode and used text_node_to_html_node
-
 from splitter import markdown_to_blocks, block_to_block_type, block, text_to_textnodes, BlockType
 from htmlnode import HTMLNode, ParentNode, LeafNode
 from textnode import text_node_to_html_node, TextNode, TextType
@@ -12,10 +5,6 @@ from os import listdir,mkdir
 from os.path import exists, isdir, isfile
 
 def extract_title(markdown):
-    # print(f"[extract_title] markdown:\n{markdown}\n")
-    # It should pull the h1 header from the markdown file (the line that starts with a single #) and return it.
-    # If there is no h1 header, raise an exception.
-    # extract_title("# Hello") should return "Hello" (strip the # and any leading or trailing whitespace)
     first_line = markdown.splitlines()[0]
     if first_line.startswith("# "):
         header = first_line.split("# ", 1)[1]
@@ -39,34 +28,25 @@ def generate_page(from_path, template_path, dest_path):
     # file structure
     dest_path_list = dest_path.split("/")
     dest_path_folder = dest_path_list[0]
-    print(f"[gen pg 42] dest_path_folder: {dest_path_folder}")
     if not exists(dest_path_folder):
         mkdir(dest_path_folder)
     for n in range(1, len(dest_path_list) - 1):
         dest_path_folder = dest_path_folder + "/" + dest_path_list[n]
-        print(f"[gen pg 45] checking dest_path_folder: exists({dest_path_folder}) {exists(dest_path_folder)}")
         if not exists(dest_path_folder):
-            print(f"creating dest_path_folder: {dest_path_folder}")
             mkdir(dest_path_folder)
-        else:
-            print(f"[gen page] dest_path_folder already exists: {dest_path_folder}")
-    print(f"[gen pg] dest path should now exist {exists(dest_path_folder)}, saving html document")
+        # else:
+            # print(f"[gen page] dest_path_folder already exists: {dest_path_folder}")
     with open(dest_path, 'w', encoding="utf8") as j:
         j.write(full_file)
-    # print(f"[full_file written to] {dest_path}")
 
 
 def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
     # explore contect path
     # when file found, generate_page
-    print(f"[exploring dir_path_content] {dir_path_content}") 
     dir_list = listdir(dir_path_content)
-    print(f"[directory contents] {dir_list}")
     for folder in dir_list:
         folder_path = dir_path_content + "/" + folder
-        print(f"[checking folder_path] {folder_path} isdir: {isdir(folder_path)} isfile: {isfile(folder_path)}")
         if isdir(folder_path):
-            print(f"[folder_path {folder_path} is a directory]")
             generate_pages_recursive(folder_path, template_path, dest_dir_path + "/" + folder)
         else:
             filename = folder.rsplit(".md", 1)[0]
@@ -85,10 +65,6 @@ def markdown_to_html_node(whole_markdown_doc):
         #print(f"[md_Block_html] {repr(md_Block_html)}\n\n")
         htmlnode_blocks.append(md_Block_html)
     return ParentNode("div", htmlnode_blocks)
-
-
-
-
 
 def block_html_wrapper(md_Block):
     if md_Block.block_type == BlockType.CODE: ## DONE
