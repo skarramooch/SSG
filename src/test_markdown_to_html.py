@@ -1,6 +1,6 @@
 import unittest
 #from htmlnode import markdown_to_html_node, to_html
-from markdown_to_html import markdown_to_html_node
+from markdown_to_html import markdown_to_html_node, extract_title, generate_page, generate_pages_recursive
 
 
 class TestMarkdownToHtml(unittest.TestCase):
@@ -304,4 +304,29 @@ test paragraph pics ![image](https://www.kasandbox.org/programming-images/avatar
         html = node.to_html()
         expected = """<div><blockquote>quote first line quote second line of text quote third line of text</blockquote></div>"""
         self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
+
+
+class test_extract_title(unittest.TestCase):
+    def test_one_line_one_header(self):
+        print(f"testing extract title")    
+        markdown = "# SIMPLE TEST CASE"
+        title = extract_title(markdown)
+        expected = "SIMPLE TEST CASE"
+        self.assertEqual(title, expected)
+
+
+class test_generate_page(unittest.TestCase):
+    def test_easy_page(self):
+        print(f"testing generate page")
+        full_html_file = generate_page("content/index.md", "template.html", "public/index.html")
+
+    def test_easy_page_w_new_folder(self):
+        print(f"testing generate page")
+        full_html_file = generate_page("content/index.md", "template.html", "public2/index.html")
+       
+
+class TestGeneratePagesRecursive(unittest.TestCase):
+    def test_folder_finder(self):
+        print(f"[testing recursive]")
+        recursive_search = generate_pages_recursive("content", "template.html", "public3")
 
