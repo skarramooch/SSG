@@ -8,6 +8,8 @@ def main():
         basepath = "/"
     else:
         basepath = argv[0].rsplit("src/main.py", 1)[0]
+        if basepath == "":
+            basepath = "/"
     print(f"[basepath] {basepath}")
     copy_static_to_public("static", "docs")
     generate_pages_recursive("content", "template.html", "docs", basepath)
