@@ -306,7 +306,7 @@ test paragraph pics ![image](https://www.kasandbox.org/programming-images/avatar
         self.assertEqual(html, expected, f"\n  actual: {html!r}\nexpected: {expected!r}")
 
 
-class test_extract_title(unittest.TestCase):
+class TestExtractTitle(unittest.TestCase):
     def test_one_line_one_header(self):
         print(f"testing extract title")    
         markdown = "# SIMPLE TEST CASE"
@@ -315,7 +315,7 @@ class test_extract_title(unittest.TestCase):
         self.assertEqual(title, expected)
 
 
-class test_generate_page(unittest.TestCase):
+class Test_GneratePage(unittest.TestCase):
     def test_easy_page(self):
         print(f"testing generate page")
         full_html_file = generate_page("content/index.md", "template.html", "public/index.html")

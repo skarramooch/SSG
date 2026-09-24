@@ -12,8 +12,8 @@ def extract_title(markdown):
     else:
         raise exception("first line did not start with H1")
 
-def generate_page(from_path, template_path, dest_path):
-    print(f"Generating page from {from_path} to {dest_path} using {template_path}")
+def generate_page(from_path, template_path, dest_path, basepath):
+    print(f"Generating page from {from_path} to {dest_path} using {template_path} on basepath {basepath}")
     with open(from_path, 'r', encoding="utf8") as f:
         markdown = f.read()
     with open(template_path, 'r', encoding="utf8") as t:
@@ -23,7 +23,10 @@ def generate_page(from_path, template_path, dest_path):
     title = extract_title(markdown)
     # reading files
     t_template = template.replace("{{ Title }}", title)
-    full_file = t_template.replace("{{ Content }}", html_string)
+    f_t_template = t_template.replace("{{ Content }}", html_string)
+    h_f_t_template = f_t_template.replace('href="/', f'href="{basepath}')
+    s_h_f_t_template = h_f_t_template.replace('src="/', f'src="{basepath}')
+    full_file = s_h_f_t_template
 
     # file structure
     dest_path_list = dest_path.split("/")
@@ -40,17 +43,17 @@ def generate_page(from_path, template_path, dest_path):
         j.write(full_file)
 
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, basepath):
     # explore contect path
     # when file found, generate_page
     dir_list = listdir(dir_path_content)
     for folder in dir_list:
         folder_path = dir_path_content + "/" + folder
         if isdir(folder_path):
-            generate_pages_recursive(folder_path, template_path, dest_dir_path + "/" + folder)
+            generate_pages_recursive(folder_path, template_path, dest_dir_path + "/" + folder, basepath)
         else:
             filename = folder.rsplit(".md", 1)[0]
-            generate_page(folder_path, template_path, dest_dir_path + "/" + filename + ".html")
+            generate_page(folder_path, template_path, dest_dir_path + "/" + filename + ".html", basepath)
 
 def markdown_to_html_node(whole_markdown_doc):
     md_blocks = markdown_to_blocks(whole_markdown_doc) #splits whole_md_doc into block chunks
