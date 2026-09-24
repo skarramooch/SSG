@@ -7,7 +7,7 @@ def main():
     if argv[1] is None:
         basepath = "/"
     else:
-        basepath = argv[1]
+        basepath = argv[1] + "/"
     print(f"[basepath] {basepath}")
     copy_static_to_public("static", "docs")
     generate_pages_recursive("content", "template.html", "docs", basepath)
